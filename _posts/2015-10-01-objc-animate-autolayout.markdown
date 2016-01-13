@@ -15,7 +15,7 @@ In the scenario below we're going to animate a `UIButton` into a view with a mov
 
 Next we will use autolayout to ensure that the button is in the center of the view with a specific width and height. If you need a refresher on how to setup constraints, hold the **Control** key down then click and drag from the view you want to impact to the view you want to create a relationship to. In our scenario we want to create constraints between the UIButton and the super view. We also want to establish height and width constraints. To do this, hold **Control** down and click & drag from the UIButton and release while still moused over the UIButton. You should see the 'Height' and 'Width' options from the context menu.
 
-![Instructional graphic for setting up a constraint via Interface builder]({{ site.baseurl }}/blog/images/AutolayoutAnim-02-HowToSetupConstraints.png){: .img-responsive .center-block }
+![Instructional graphic for setting up a constraint via Interface builder]({{ site.baseurl }}/images/AutolayoutAnim-02-HowToSetupConstraints.png){: .img-responsive .center-block }
 
 First create a constraint between the button and the super view to `Center Horizontally in Center`. Then create a constraint between the button and the super view to `Center Vertically in Center`. Finally, create two more constraints for the button's height and width. When you're done setting up the constraints it should look similar to this. 
 
