@@ -3,7 +3,7 @@ title: traversoft
 email: info@traversoft.com
 description: "We handle iOS and Android development projects of all sorts. We can also help you implement an HTML5/CSS webapp with either a C# or Java backend. Whatever your mobile app needs are we've got the skills to make it happen."
 baseurl: ""
-url: "https://miketraverso.github.io"
+url: "//miketraverso.github.io"
 pygments: true
 
 sitemap:
@@ -21,5 +21,5 @@ sitemap:
 markdown: kramdown
 permalink: pretty
 paginate: 10
-paginate_path: "/blog/page:num/"
+paginate_path: "/page:num/"
 
