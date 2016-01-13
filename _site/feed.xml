@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>traversoft</title>
+    <description>We handle iOS and Android development projects of all sorts. We can also help you implement an HTML5/CSS webapp with either a C# or Java backend. Whatever your mobile app needs are we&#39;ve got the skills to make it happen.</description>
+    <link>http://traversoft.com/blog/</link>
+    <atom:link href="http://traversoft.com/blog/feed.xml" rel="self" type="application/rss+xml" />
+    
+      <item>
+        <title>Animation with Autolayout</title>
+        <description>&lt;p&gt;Lots of apps take advantage of autolayout, and if your app isn’t currently you really should check out implementing it. Autolayout is a great tool for getting all your UIView components to be in the right place and be the right size. Animation is just the movement of objects. Sort of seems like we have two diametrically opposing concepts here; autolayout to get things in the right place with the right size and animation to move those same things around. They’re not though and here’s why: autolayout ensures the correct position of the UIViews before and after any animation (i.e. scaling, translation, etc.). &lt;/p&gt;
+
+&lt;p&gt;In the scenario below we’re going to animate a &lt;code&gt;UIButton&lt;/code&gt; into a view with a move up and fade in animation. First let’s go ahead and find the XIB or Storyboard that we want to add the button to.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnim-01-UISetup.png&quot; alt=&quot;Initial UI Layout&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Next we will use autolayout to ensure that the button is in the center of the view with a specific width and height. If you need a refresher on how to setup constraints, hold the &lt;strong&gt;Control&lt;/strong&gt; key down then click and drag from the view you want to impact to the view you want to create a relationship to. In our scenario we want to create constraints between the UIButton and the super view. We also want to establish height and width constraints. To do this, hold &lt;strong&gt;Control&lt;/strong&gt; down and click &amp;amp; drag from the UIButton and release while still moused over the UIButton. You should see the ‘Height’ and ‘Width’ options from the context menu.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnim-02-HowToSetupConstraints.png&quot; alt=&quot;Instructional graphic for setting up a constraint via Interface builder&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;First create a constraint between the button and the super view to &lt;code&gt;Center Horizontally in Center&lt;/code&gt;. Then create a constraint between the button and the super view to &lt;code&gt;Center Vertically in Center&lt;/code&gt;. Finally, create two more constraints for the button’s height and width. When you’re done setting up the constraints it should look similar to this. &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnim-02-ConstraintSetup.png&quot; alt=&quot;Setting up the constraints&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Next up we’re going to go ahead and set the constant value of the &lt;code&gt;Center Vertically in Center&lt;/code&gt; constraint. Our goal is to animate the button up so we will first have to set its initial position a bit further down on the view. In this case, let’s say 100 points. Now our button is 100 points south of where we want it to be when we’re done animating. &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnim-02-ConstraintSetup.png&quot; alt=&quot;Setting the constraint constant value&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Let’s juice this up a bit and have it fade in while it moves up. To fade it in, it must first be faded out. Setting the alpha level on the button itself will do the trick&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnimation-05-SetAlpha.png&quot; alt=&quot;Setting up the alpha level to 0&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Cool, we’re almost done with interface builder. We’ll just go ahead and create outlets for the button and the button’s vertical constraint within the view. Go ahead and create these constraints. Lots of times properties are created in the header file but if you don’t need to expose these properties to other classes we can go ahead and keep them private within the implementation. While it’s pretty well known on how to create the property for a button, you may not have done this for a constraint. Luckily though it’s just as simple. Instead of dragging from the button, find the constraint and click and drag from there as seen in the screenshot below.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnimation-06-CreateConstraintOutlet.png&quot; alt=&quot;Outlet connection for constraint&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Your constraints should look pretty much like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnimation-06-OutletCreated.png&quot; alt=&quot;Constraints should like like example&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now for the final part. Adding in the animation. To animate with autolayout we will change the constant of the vertical constraint. Remember we initially set this to be 100. We want to animate the button back to the center of the screen so we can set this constant value to 0. If we were to add this constant change to the animations block of a &lt;code&gt;[UIView animateWithDuration:animations]&lt;/code&gt; call we would see the button in the place we want it but no animation. The reason being that setting the constant is just the first step. The actual change happens when the layout is redrawn with the new constraint constant. So if we set the constraint constant and then in the animation block make a call to &lt;code&gt;layoutIfNeeded&lt;/code&gt; we will see the animation occur where the button starts out 100 points off of center and moves up to center. Inside the animation block we’ll add a call to set the button’s alpha level to 1 so that it’s fully visible. Check out the snippet below where we have this coded up in the &lt;code&gt;viewDidAppear&lt;/code&gt; method of the view. Following the code snippet we have a sample of what this animation will look like on the device. Play around with the duration value but remember users didn’t download your app to watch animated feature films so keep them relevant and don’t keep users waiting for complex animations to happen before they can use your app.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;objective-c&quot;&gt;&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;viewDidAppear:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;animated&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;super&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;viewDidAppear&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;animated&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    
+    &lt;span class=&quot;n&quot;&gt;constraintButtonVertPosition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;constant&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;animateWithDuration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;.5f&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;animations&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;btnLogin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;btnLogin&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;layoutIfNeeded&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;And here it is in action… hope this helps!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/loginAnimation.gif&quot; alt=&quot;Sample animation&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 01 Oct 2015 12:33:33 -0400</pubDate>
+        <link>http://traversoft.com/blog/2015/10/01/objc-animate-autolayout/</link>
+        <guid isPermaLink="true">http://traversoft.com/blog/2015/10/01/objc-animate-autolayout/</guid>
+      </item>
+    
+      <item>
+        <title>Which image did I just load into that UIImage?</title>
+        <description>&lt;p&gt;It’s been a couple of weeks since my last post. In this brief post I am going to show you how to check out what image you’ve loaded into your UIImage. I found this helpful when loading image assets from a REST webservice. So first thing’s first I set up a breakpoint after my UIImage is initialized.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/set-uiimage-in-xcode.png&quot; alt=&quot;XCode Breakpoint at UIImage initialization&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Then by clicking the &lt;em&gt;eyeball&lt;/em&gt; icon we get a nice preview of the image. Pretty neat. &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/preview-uiimage-in-xcode.png&quot; alt=&quot;Preview UIImage in XCode&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I know this probably won’t be incredibly useful to lots of folks but hopefully it comes in handy for someone that’s struggling to make sure they have the right image at the right time.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 15 Sep 2015 11:33:41 -0400</pubDate>
+        <link>http://traversoft.com/blog/2015/09/15/xcode-debugging-images%20copy/</link>
+        <guid isPermaLink="true">http://traversoft.com/blog/2015/09/15/xcode-debugging-images%20copy/</guid>
+      </item>
+    
+      <item>
+        <title>How to customize Android UI</title>
+        <description>&lt;p&gt;In this post I will walk you through how to achieve customization of various Android UI elements. For those not interested in reading through this, all the code can be found on &lt;strong&gt;&lt;a href=&quot;https://github.com/miketraverso/CustomUIComponentsDemo&quot;&gt;GitHub&lt;/a&gt;&lt;/strong&gt;. For everyone else let’s get started applying our own theme to our app!&lt;/p&gt;
+
+&lt;p&gt;So let’s go ahead and open up Android studio and create a new Android project. 
+Let’s go ahead and select a &lt;strong&gt;Blank Activity&lt;/strong&gt; and we can keep the default name of MainActivity for this activity. 
+Now we’re ready to start getting our app customized!&lt;/p&gt;
+
+&lt;p&gt;Android has come a long way in terms of its look and feel. Unfortunately, though it’s not as easy to completely get your app’s UI components to match the theme of your app. With iOS you could simply chose the font you wanted for a label from a dropdown. Android doesn’t make this as simple. For example, if you want to use a custom font for your TextView you would have to create the &lt;code&gt;TextView&lt;/code&gt; in the layout file, get a reference to that component by its ID then load your font into a &lt;code&gt;TypeFace&lt;/code&gt; and apply the &lt;code&gt;Typeface&lt;/code&gt; to your &lt;code&gt;TextView&lt;/code&gt; reference. Let’s walk through how we would do that with a specific example. &lt;/p&gt;
+
+&lt;p&gt;Here’s our layout for our MainActivity and below the layout XML we have a screenshot of what the app looks like. Go ahead and copy and paste this into your activity_mail.xml. We are setting up a &lt;code&gt;RelativeLayout&lt;/code&gt; with three components. A &lt;code&gt;TextView&lt;/code&gt;, an &lt;code&gt;EditText&lt;/code&gt; component and a &lt;code&gt;Button&lt;/code&gt;. Pretty simple interface.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;RelativeLayout&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns:android=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res/android&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;xmlns:tools=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/tools&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;android:layout_width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;match_parent&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;android:layout_height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;match_parent&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;android:paddingLeft=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@dimen/activity_horizontal_margin&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;android:paddingRight=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@dimen/activity_horizontal_margin&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;android:paddingTop=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@dimen/activity_vertical_margin&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;android:paddingBottom=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@dimen/activity_vertical_margin&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;tools:context=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;.MainActivity&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;TextView&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;android:id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@+id/myTextView&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:text=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@string/label&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;wrap_content&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;wrap_content&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;EditText&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@+id/myEditTextView&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;fill_parent&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;wrap_content&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_below=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@+id/myTextView&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;Button&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@+id/button&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;wrap_content&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;wrap_content&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:text=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Submit&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_below=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@+id/myEditTextView&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_alignParentStart=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;true&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_marginTop=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;40dp&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/RelativeLayout&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/default-app-components.png&quot; alt=&quot;App without customization&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now we can update our MainActivity.java but adding to our &lt;strong&gt;onCreate&lt;/strong&gt; method the following code. With the following code we are going to create a &lt;code&gt;Typeface&lt;/code&gt; with our font. Then we are going to apply that &lt;code&gt;Typeface&lt;/code&gt; to our &lt;code&gt;TextView&lt;/code&gt;. This will allow the &lt;code&gt;TextView&lt;/code&gt; to appear with the Gotham-Bold font. &lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onCreate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bundle&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+	&lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;onCreate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;setContentView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;activity_layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;customTypeface&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;createFromAsset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getAssets&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;fonts/Gotham-Bold.otf&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	
+	&lt;span class=&quot;n&quot;&gt;TextView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mTextView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;mTextView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TextView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;findViewById&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;myTextView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;mTextView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setTypeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;customTypeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt; 
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;In this example, you can see that in the activity’s &lt;code&gt;onCreate(Bundle savedInstanceState)&lt;/code&gt; method we set the content view and from the loaded view layout we get a reference to the &lt;code&gt;TextView&lt;/code&gt; with identifier &lt;em&gt;myTextView&lt;/em&gt;. &lt;/p&gt;
+
+&lt;p&gt;The next step is to create a &lt;code&gt;Typeface&lt;/code&gt; object with the font you want to use. I’m using the Gotham-Bold.otf font file, but you would replace with your own font file along with the correct path to said font file if you wanted to create a different directory to keep your font assets in. In my case, under all my font’s can be found in the newly created &lt;strong&gt;assets&lt;/strong&gt; directory where I have a sub-folder named &lt;strong&gt;fonts&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/custom-android-ui-font.png&quot; alt=&quot;Android Studio Project explorer showings assets/fonts/ directory&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In the final step we call setTypeface on the desired &lt;code&gt;TextView&lt;/code&gt; object and we now have a label with our custom font. Check out the screenshot below to see what this code will generate in the app. Pretty cool huh? We can do the same with an &lt;code&gt;EditText&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onCreate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bundle&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+	&lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;onCreate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;setContentView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;activity_layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	
+	&lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;customTypeface&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;createFromAsset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getAssets&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;fonts/Gotham-Bold.otf&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+	&lt;span class=&quot;n&quot;&gt;TextView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mTextView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;mTextView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TextView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;findViewById&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;myTextView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;mTextView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setTypeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;customTypeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	
+	&lt;span class=&quot;n&quot;&gt;EditText&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mEditTextView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;mEditTextView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;EditText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;findViewById&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;myEditTextView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;mEditTextView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setTypeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;customTypeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt; 
+
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/custom-text-components.png&quot; alt=&quot;App with custom TextView and EditText font&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This is a quick and dirty way of doing it. It’s effective sure but having to create a reference to each &lt;code&gt;TextView&lt;/code&gt;, &lt;code&gt;EditText&lt;/code&gt;, &lt;code&gt;Button&lt;/code&gt;, etc. generates a lot of the same code. Wouldn’t it be nice to have this code in one place that is called every time you create a layout with a your custom UI component class? If only that could be done. Wait… it can!&lt;/p&gt;
+
+&lt;p&gt;Before we get into the nitty gritty add the following class to your project. It’s main function is to load a font from the &lt;strong&gt;font&lt;/strong&gt;’s folder of your app’s &lt;strong&gt;assets&lt;/strong&gt; directory. Just to avoid loading and reloading the same font into memory over and over again as you begin to use it.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;traversoft&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;customuicomponentsdemo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.content.Context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.graphics.Typeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;java.util.Hashtable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;TypefaceManager&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Hashtable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Hashtable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;();&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Context&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;kd&quot;&gt;synchronized&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;containsKey&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+                &lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;createFromAsset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getAssets&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;fonts/%s.otf&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;put&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now let’s create a new java file in your project and call it &lt;code&gt;PositiveActionButton.java&lt;/code&gt;. Here we’ll create a custom class that extends &lt;code&gt;Button&lt;/code&gt; to set the typeface, set the background color, the button font color and set the default font size.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;traversoft&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;customuicomponentsdemo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.content.Context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.util.AttributeSet&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.widget.Button&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PositiveActionButton&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Button&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;Context&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mContext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;PositiveActionButton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Context&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AttributeSet&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;attrs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defStyle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;attrs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defStyle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mContext&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;PositiveActionButton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Context&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AttributeSet&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;attrs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;attrs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mContext&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;PositiveActionButton&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Context&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mContext&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;setTypeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TypefaceManager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mContext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Gotham-Bold&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;setTextColor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mContext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getColor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;white&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;				&lt;span class=&quot;c1&quot;&gt;// Feel free to use any color you like here&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;setBackgroundColor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mContext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getColor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;light_blue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Feel free to use any color you like here&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;setTextSize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;19&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We just need to update our &lt;code&gt;activity_main.xml&lt;/code&gt; layout to leverage this new UI component. Here’s the listing below. We’ve replaced the &amp;lt;Button&amp;gt; component with our custom PositiveActionButton component. Notice that we’ve given the fully qualified package name here. I believe in the latest version of Android Studio this isn’t necessary but in the version I’ve used to build this is still necessary. Notice though that we’re not creating more complicated layout files wherever we want the same positive action button to appear. For every time we would want to have a button that has custom font, text color, background color and text size we would have to duplicate that code over and over again. With our custom class we take care of that in one place.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;RelativeLayout&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns:android=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res/android&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;xmlns:tools=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/tools&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;android:layout_width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;match_parent&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;android:layout_height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;match_parent&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;android:paddingLeft=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@dimen/activity_horizontal_margin&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;android:paddingRight=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@dimen/activity_horizontal_margin&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;android:paddingTop=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@dimen/activity_vertical_margin&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;android:paddingBottom=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@dimen/activity_vertical_margin&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;tools:context=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;.MainActivity&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;TextView&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;android:id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@+id/myTextView&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:text=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@string/label&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;wrap_content&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;wrap_content&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;EditText&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@+id/myEditTextView&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;fill_parent&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;wrap_content&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_below=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@+id/myTextView&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;traversoft.com.customuicomponentsdemo.PositiveActionButton&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@+id/button&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;wrap_content&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;wrap_content&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:text=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Submit&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_below=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@+id/myEditTextView&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_alignParentStart=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;true&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:layout_marginTop=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;40dp&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/RelativeLayout&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here’s what you should be seeing so far. Custom EditText and TextView fonts and a custom light blue button with large white text.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/custom-text-and-button-components.png&quot; alt=&quot;App with custom TextView, EditText fonts and custom Button&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Looking pretty good right. Except we have that ugly default font in our ActivityBar. No offense Google, but that just doesn’t match the app anymore. So let’s update that font to match what we have for our custom Button, EditText and TextView. Let’s go ahead and create a new Java file in our package that we’ll call &lt;strong&gt;CustomTypefaceSpan.java&lt;/strong&gt;. Here’s the code we’ll use in this class&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;traversoft&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;customuicomponentsdemo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.content.Context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.graphics.Paint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.graphics.Typeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.text.TextPaint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.text.style.TypefaceSpan&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;CustomTypefaceSpan&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TypefaceSpan&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;CustomTypefaceSpan&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Context&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;family&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;family&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;typeface&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;createFromAsset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getAssets&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;fonts/Gotham-Bold.otf&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;newType&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;typeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;updateDrawState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TextPaint&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;paint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;applyCustomTypeFace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;paint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;updateMeasureState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TextPaint&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;paint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;applyCustomTypeFace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;paint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newType&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;applyCustomTypeFace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Paint&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;paint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Typeface&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;paint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setTypeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s examine what’s going on here as this is the most complicated thing we’ll be doing. Our constructor takes a &lt;code&gt;Context&lt;/code&gt; and a &lt;code&gt;String&lt;/code&gt;. Since we’re extending the TypefaceSpan class we’re going to call &lt;strong&gt;super(family)&lt;/strong&gt; to construct a TypefaceSpan object with the font family description should we want to specify one. Next we use the passed in &lt;code&gt;Context&lt;/code&gt; to obtain a &lt;code&gt;Typeface&lt;/code&gt; and then set that to our private &lt;code&gt;Typeface&lt;/code&gt; data member.&lt;/p&gt;
+
+&lt;p&gt;Next we’re going to override &lt;code&gt;updateDrawState(TextPaint paint)&lt;/code&gt; and &lt;code&gt;updateMeasureState(TextPaint paint)&lt;/code&gt; to call a method that we’ll use to set the typeface of the custom &lt;code&gt;Paint&lt;/code&gt; so that it knows what to do (i.e. paint the text on the screen with the specified font). Lastly we will want to leverage this so let’s add the following method to &lt;strong&gt;MainActivity.java&lt;/strong&gt; and add a call to this method at the end of the &lt;strong&gt;onCreate&lt;/strong&gt; method.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setupCustomActionBar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;SpannableStringBuilder&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spannedTitle&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SpannableStringBuilder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getTitle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;spannedTitlte&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setSpan&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CustomTypefaceSpan&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getApplicationContext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spannedTitle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Spanned&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;SPAN_EXCLUSIVE_INCLUSIVE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;ActionBar&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;actionBar&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getActionBar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;actionBar&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;actionBar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setTitle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;spannedTitle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;If we go ahead and run this sample code now we should see the following. An app with a themed ActionBar, TextView, EditText and Button. Pretty cool huh? I think so and I truly hope that this article was helpful. The full sample code project can be found on my &lt;strong&gt;&lt;a href=&quot;https://github.com/miketraverso/CustomUIComponentsDemo&quot;&gt;GitHub&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/custom-text-button-actionbar-components.png&quot; alt=&quot;App with custom TextView, EditText fonts, custom Button and custom font for the ActionBar&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+</description>
+        <pubDate>Tue, 01 Sep 2015 08:36:01 -0400</pubDate>
+        <link>http://traversoft.com/blog/2015/09/01/android-custom-ui-components/</link>
+        <guid isPermaLink="true">http://traversoft.com/blog/2015/09/01/android-custom-ui-components/</guid>
+      </item>
+    
+      <item>
+        <title>Having trouble with Fabric and Android Studio?</title>
+        <description>&lt;p&gt;Fabric, (www.fabric.io) is the new umbrella webapp from Twitter that incorporates all of Twitter’s APIs. Fabric provides plugins for XCode, IntelliJ, Eclipse and Android Studio providing support for Crashlytics, Twitter, MoPub and Digits. It’s extremely easy to get setup, most of the time that is, with it’s walkthrough setup process. There are parts of the setup that either wait for you to do something and in most cases will actually update your files with the necessary code. No need to track down files, figure out where to make the change, make the change and hope for the best. &lt;/p&gt;
+
+&lt;p&gt;Today though I came across a bit of a problem getting Fabric and the Crashlytics API properly installed in my version of Android Studio. A bit of background on my situation. I’ve got an Android only, libgdx based, project running with the latest stable Android Studio (v1.3.0.10). LibGDX allows you to create projects that run cross platform. Web, iOS, Android, Windows, Mac… heck even Blackberry. One of the nasty results of this is that there are multiple projects with multiple &lt;code&gt;build.gradle&lt;/code&gt; files. Which probably led to my issue :&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/gradle-error.png&quot; alt=&quot;Android Studio with Gradle build error&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Basically my AndroidLauncher.java, which is my app’s entry point, where I am calling the Fabric setup methods, complained that it couldn’t find teh Crashlyitcs and Fabric packages. Ruh-roh right? &lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;traversoft&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hff&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;android&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.os.Bundle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;com.badlogic.gdx.backends.android.AndroidApplication&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;com.badlogic.gdx.backends.android.AndroidApplicationConfiguration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;com.traversoft.hff.HereFishyFishyMain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;com.crashlytics.android.Crashlytics&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;io.fabric.sdk.android.Fabric&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AndroidLauncher&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AndroidApplication&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onCreate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bundle&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;onCreate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;Fabric&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;with&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Crashlytics&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;AndroidApplicationConfiguration&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AndroidApplicationConfiguration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;initialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HereFishyFishyMain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Something went wrong with the setup process. So let’s check out our main build.gradle file.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;basemake&quot;&gt;&lt;span class=&quot;err&quot;&gt;buildscript&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;repositories&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;err&quot;&gt;mavenCentral()&lt;/span&gt;
+        &lt;span class=&quot;nf&quot;&gt;maven { url &amp;quot;https&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;//oss.sonatype.org/content/repositories/snapshots/&amp;quot; }&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    dependencies &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        classpath &lt;span class=&quot;s1&quot;&gt;&amp;#39;com.android.tools.build:gradle:1.2.3&amp;#39;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;allprojects&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;apply plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;&amp;quot;eclipse&amp;quot;&lt;/span&gt;
+    apply plugin: &lt;span class=&quot;s2&quot;&gt;&amp;quot;idea&amp;quot;&lt;/span&gt;
+
+    &lt;span class=&quot;nv&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.0&amp;#39;&lt;/span&gt;
+    ext &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nv&quot;&gt;appName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;android-herefishyfishy&amp;#39;&lt;/span&gt;
+        &lt;span class=&quot;nv&quot;&gt;gdxVersion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.6.4&amp;#39;&lt;/span&gt;
+        &lt;span class=&quot;nv&quot;&gt;roboVMVersion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.5.0&amp;#39;&lt;/span&gt;
+        &lt;span class=&quot;nv&quot;&gt;box2DLightsVersion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.4&amp;#39;&lt;/span&gt;
+        &lt;span class=&quot;nv&quot;&gt;ashleyVersion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.4.0&amp;#39;&lt;/span&gt;
+        &lt;span class=&quot;nv&quot;&gt;aiVersion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.5.0&amp;#39;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    repositories &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        mavenCentral&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+        maven &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; url &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://oss.sonatype.org/content/repositories/snapshots/&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        maven &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; url &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://oss.sonatype.org/content/repositories/releases/&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nf&quot;&gt;project(&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;android&amp;quot;) {&lt;/span&gt;
+    apply plugin: &lt;span class=&quot;s2&quot;&gt;&amp;quot;android&amp;quot;&lt;/span&gt;
+
+    configurations &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; natives &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    dependencies &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        compile project&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;:core&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-backend-android:$gdxVersion&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-box2d:$gdxVersion&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi-v7a&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-freetype:$gdxVersion&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-tools:$gdxVersion&amp;quot;&lt;/span&gt;
+        compile fileTree&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;dir: &lt;span class=&quot;s1&quot;&gt;&amp;#39;../libs&amp;#39;&lt;/span&gt;, include: &lt;span class=&quot;s1&quot;&gt;&amp;#39;*.jar&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nf&quot;&gt;project(&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;core&amp;quot;) {&lt;/span&gt;
+    apply plugin: &lt;span class=&quot;s2&quot;&gt;&amp;quot;java&amp;quot;&lt;/span&gt;
+
+
+    dependencies &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx:$gdxVersion&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-box2d:$gdxVersion&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;net.dermetfan.libgdx-utils:libgdx-utils:0.13.0&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;net.dermetfan.libgdx-utils:libgdx-utils-box2d:0.13.0&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.kotcrab.vis:vis-ui:0.7.7&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.underwaterapps.overlap2druntime:overlap2d-runtime-libgdx:0.1.0&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-freetype:$gdxVersion&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-tools:$gdxVersion&amp;quot;&lt;/span&gt;
+        compile fileTree&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;dir: &lt;span class=&quot;s1&quot;&gt;&amp;#39;../libs&amp;#39;&lt;/span&gt;, include: &lt;span class=&quot;s1&quot;&gt;&amp;#39;*.jar&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;tasks.eclipse.doLast&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;delete&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;.project&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;So the problem here is that there is no mention anywhere to getting the necessary jars for a complete Fabric/Crashlytics installation. So let’s go add it. First off we will need to add repositories and dependencies to the buildscript section of the build.gradle file&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url &amp;quot;https://oss.sonatype.org/content/repositories/snapshots/&amp;quot; }
+        maven { url &amp;#39;https://maven.fabric.io/public&amp;#39; }
+    }
+    dependencies {
+        classpath &amp;#39;com.android.tools.build:gradle:1.2.3&amp;#39;
+        classpath &amp;#39;io.fabric.tools:gradle:1.+&amp;#39;
+    }
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code&gt;jcenter()&lt;/code&gt; refers to the new hotness that is a new maven repository for Android Studio’s gradle plugin. &lt;a href=&quot;https://bintray.com/bintray/jcenter&quot;&gt;Check it out here&lt;/a&gt;. Then we have the Fabric specific maven url. Under dependencies we see the Fabric classpath pointing to the latest version 1.+. Next we look to apply our Fabric plugin. In my case it’s under &lt;code&gt;project(&quot;:android&quot;)&lt;/code&gt; if you’re just using a basic android app gradle.build this probably won’t be within a &lt;code&gt;project&lt;/code&gt; block and would just normally be under the &lt;code&gt;buildscript&lt;/code&gt; section.     &lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;project(&amp;quot;:android&amp;quot;) {
+    apply plugin: &amp;quot;android&amp;quot;
+    apply plugin: &amp;#39;io.fabric&amp;#39;
+
+    configurations { natives }
+
+    repositories {
+        jcenter()
+        maven { url &amp;#39;https://maven.fabric.io/public&amp;#39; }
+    }
+
+	...&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here we re adding our &lt;code&gt;apply plugin: &#39;io.fabric&#39;&lt;/code&gt; command and adding our repositories block. So that covers what Twitter covers in their manual setup &lt;a href=&quot;http://docs.fabric.io/android/fabric/integration.html&quot;&gt;blog&lt;/a&gt;. If you sync up your gradle build now you should be all good to go… except you won’t be. The Twitter blog fails to mention that you also need to add the following under your Android app’s &lt;code&gt;dependencies&lt;/code&gt; section.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;compile(&amp;#39;com.crashlytics.sdk.android:crashlytics:2.2.3@aar&amp;#39;) {
+    transitive = true;
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We’re specifying &lt;code&gt;transitive = true;&lt;/code&gt; to get any dependencies that the crashlytics aar depends upon. (FYI: An AAR is the binary distribution of an Android Library Project, like an &lt;strong&gt;A&lt;/strong&gt;ndroid &lt;strong&gt;AR&lt;/strong&gt;chive). Once this is added we’re all done and we’ll notice if we gradle sync now our entry point class, or wherever you’ve added &lt;code&gt;Fabric.with(this, new Crashlytics());&lt;/code&gt; will now be able to find the necessary libraries it needs to compile. Here’s a full listing of my build.gradle for reference. &lt;/p&gt;
+
+&lt;p&gt;Hope that this helps!&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;make&quot;&gt;&lt;span class=&quot;err&quot;&gt;buildscript&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;repositories&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;err&quot;&gt;mavenCentral()&lt;/span&gt;
+        &lt;span class=&quot;err&quot;&gt;jcenter()&lt;/span&gt;
+        &lt;span class=&quot;nf&quot;&gt;maven { url &amp;quot;https&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;//oss.sonatype.org/content/repositories/snapshots/&amp;quot; }&lt;/span&gt;
+        maven &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; url &lt;span class=&quot;s1&quot;&gt;&amp;#39;https://maven.fabric.io/public&amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    dependencies &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        classpath &lt;span class=&quot;s1&quot;&gt;&amp;#39;com.android.tools.build:gradle:1.2.3&amp;#39;&lt;/span&gt;
+        classpath &lt;span class=&quot;s1&quot;&gt;&amp;#39;io.fabric.tools:gradle:1.+&amp;#39;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;allprojects&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;apply plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;&amp;quot;eclipse&amp;quot;&lt;/span&gt;
+    apply plugin: &lt;span class=&quot;s2&quot;&gt;&amp;quot;idea&amp;quot;&lt;/span&gt;
+
+    &lt;span class=&quot;nv&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.0&amp;#39;&lt;/span&gt;
+    ext &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nv&quot;&gt;appName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;android-herefishyfishy&amp;#39;&lt;/span&gt;
+        &lt;span class=&quot;nv&quot;&gt;gdxVersion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.6.4&amp;#39;&lt;/span&gt;
+        &lt;span class=&quot;nv&quot;&gt;roboVMVersion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.5.0&amp;#39;&lt;/span&gt;
+        &lt;span class=&quot;nv&quot;&gt;box2DLightsVersion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.4&amp;#39;&lt;/span&gt;
+        &lt;span class=&quot;nv&quot;&gt;ashleyVersion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.4.0&amp;#39;&lt;/span&gt;
+        &lt;span class=&quot;nv&quot;&gt;aiVersion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.5.0&amp;#39;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    repositories &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        mavenCentral&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+        maven &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; url &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://oss.sonatype.org/content/repositories/snapshots/&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        maven &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; url &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://oss.sonatype.org/content/repositories/releases/&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nf&quot;&gt;project(&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;android&amp;quot;) {&lt;/span&gt;
+    apply plugin: &lt;span class=&quot;s2&quot;&gt;&amp;quot;android&amp;quot;&lt;/span&gt;
+    apply plugin: &lt;span class=&quot;s1&quot;&gt;&amp;#39;io.fabric&amp;#39;&lt;/span&gt;
+
+    configurations &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; natives &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    repositories &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        jcenter&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+        maven &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; url &lt;span class=&quot;s1&quot;&gt;&amp;#39;https://maven.fabric.io/public&amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    dependencies &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        compile project&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;:core&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-backend-android:$gdxVersion&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-box2d:$gdxVersion&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi-v7a&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-freetype:$gdxVersion&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a&amp;quot;&lt;/span&gt;
+        natives &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-tools:$gdxVersion&amp;quot;&lt;/span&gt;
+        compile fileTree&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;dir: &lt;span class=&quot;s1&quot;&gt;&amp;#39;../libs&amp;#39;&lt;/span&gt;, include: &lt;span class=&quot;s1&quot;&gt;&amp;#39;*.jar&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        compile&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;com.crashlytics.sdk.android:crashlytics:2.2.3@aar&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;nv&quot;&gt;transitive&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nf&quot;&gt;project(&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;core&amp;quot;) {&lt;/span&gt;
+    apply plugin: &lt;span class=&quot;s2&quot;&gt;&amp;quot;java&amp;quot;&lt;/span&gt;
+
+
+    dependencies &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx:$gdxVersion&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-box2d:$gdxVersion&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;net.dermetfan.libgdx-utils:libgdx-utils:0.13.0&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;net.dermetfan.libgdx-utils:libgdx-utils-box2d:0.13.0&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.kotcrab.vis:vis-ui:0.7.7&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.underwaterapps.overlap2druntime:overlap2d-runtime-libgdx:0.1.0&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-freetype:$gdxVersion&amp;quot;&lt;/span&gt;
+        compile &lt;span class=&quot;s2&quot;&gt;&amp;quot;com.badlogicgames.gdx:gdx-tools:$gdxVersion&amp;quot;&lt;/span&gt;
+        compile fileTree&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;dir: &lt;span class=&quot;s1&quot;&gt;&amp;#39;../libs&amp;#39;&lt;/span&gt;, include: &lt;span class=&quot;s1&quot;&gt;&amp;#39;*.jar&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;err&quot;&gt;tasks.eclipse.doLast&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;delete&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;.project&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+</description>
+        <pubDate>Thu, 06 Aug 2015 11:14:00 -0400</pubDate>
+        <link>http://traversoft.com/blog/2015/08/06/having-trouble-with-fabric-android-studio/</link>
+        <guid isPermaLink="true">http://traversoft.com/blog/2015/08/06/having-trouble-with-fabric-android-studio/</guid>
+      </item>
+    
+      <item>
+        <title>Hiding empty table cells in UITableViews</title>
+        <description>&lt;p&gt;Recently for a coding challenge I had to display a table full of search results from a web service. Always a fun challenge but when you really want to impress sometimes this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/jeter-lines.png&quot; alt=&quot;UITableView with empty cells&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;just looks a bit off putting if you’re trying to show off your UI/UX skills. So how can we get rid of these empty cells? Well one way would be to add a UIView to your custom UITableViewCells, give it a background color and set it just at the bottom of your UITableViewCell. Then set the UITableViewCell separator property to None and call it a day. &lt;/p&gt;
+
+&lt;p&gt;I won’t go into why that’s such an absolutely awful idea, just so long as I’m able to hopefully convince you that it is and that there is a much easier and smarter way to get the results we want. So how exactly can we get rid of those cells?! For reference here’s a diagram of what the UITableView component looks like with all the bells and whistles. &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/uitableview-components.png&quot; alt=&quot;UITableView UI components&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We can see the table has two sections, each with two rows. We can also see the table’s header view and the table’s footer view. Most apps don’t bother with the table header and footer views but what would happen should we create a new UIView and assign that view to the table’s footer view? We can do that with the following code. Here we have the the IBOutlet for the table defined as &lt;code&gt;_resultsTable&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;objective-c&quot;&gt;&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;viewDidLoad&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;super&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;viewDidLoad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_resultsTable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tableFooterView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Setting the tableFooterView property to a new UIView takes care of this problem. The tableFooterView isn’t the same as the footerViewForSection view. It’s the footer view for the entire table. In setting it to an empty view, as we did in our viewDidLoad method from above, we get the following results:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/jeter-no-lines.png&quot; alt=&quot;UITableView without empty cells&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Setting an “empty” tableFooterView prompts iOS to show the tableFooterView instead of the empty cells in your table.&lt;/p&gt;
+
+&lt;p&gt;Hope this helps!&lt;/p&gt;
+</description>
+        <pubDate>Wed, 05 Aug 2015 11:14:00 -0400</pubDate>
+        <link>http://traversoft.com/blog/2015/08/05/hide-empty-cells/</link>
+        <guid isPermaLink="true">http://traversoft.com/blog/2015/08/05/hide-empty-cells/</guid>
+      </item>
+    
+      <item>
+        <title>How to determine nearby locations with trigonometry!</title>
+        <description>&lt;p&gt;Lots of apps out there figure out how to determine locations near you. So just how exactly do we do that? Well SQLServer has some nice functionality baked right in. So does Android and iOS. What if you’re using mySQL and all you’ve got are latitudes and longitudes? How would you figure out which of those locations are near where you are?&lt;/p&gt;
+
+&lt;p&gt;Do you remember your high school trigonometry? Does the acronym &lt;code&gt;SOHCAHTOA&lt;/code&gt; make you cringe? If you’ve answered yes to either of these questions and have bad flashbacks or the urge to break out your TI-92 calculator don’t fret. If you’ve no idea what I’m talking about you must be one of the cool kids. Either way, we’re going to review some of the basics. &lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;SOHCAHTOA&lt;/code&gt; is a mnemonic to help you remember your trigonometry. The following equations define the relationships between the sides and angles of triangles. We’re not going to give a complete trigonometry refresher here but this should jog your memory a little bit.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/angle.png&quot; alt=&quot;SOHCAHTOA Explained&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;matlab&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;θ&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opposite&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hypotenuse&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SOH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+ &lt;span class=&quot;nb&quot;&gt;cos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;θ&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;adjecent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hypotenuse&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CAH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+ &lt;span class=&quot;nb&quot;&gt;tan&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;θ&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opposite&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;adjecent&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TOA&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Despite what some may believe the earth is round. Pictures taken from the Apollo program’s command module prove the earth is round… well ok to be technical it’s more like an oblate spheroid if we’re going to be precise. &lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/earth.jpg&quot; alt=&quot;Yep, the earth is round!&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;With that in mind we need to understand that there is a system by which any point on the surface of a round object, such as the Earth, can be found using a geographic coordinate system. This system uses a grid that’s laid over of the earth. This grid of imaginary lines, connect the north pole to the south pole or the top of the Earth to the bottom. These are called meridians and represent all 360 degrees ranging from -180 to 180 where 0 represents the prime meridian. The imaginary lines that circle around the earth are parallels. With the prime parallel located at the equator parallels in the southern hemisphere range from 0 degrees to -90 degrees and in the northern hemisphere range from 0 to 90 degrees. This coordinate system is what your car’s GPS uses to tell you where you are and help you get to where you’re going.&lt;/p&gt;
+
+&lt;p&gt;Longitude measures the meridians and latitude measures the parallels. With latitude and longitude you can determine any spot on the surface of the earth. With these being measure in degrees we can use some trigonometry to determine the distance between two points. There’s a super neat formula called the &lt;a href=&quot;http://www.movable-type.co.uk/scripts/latlong.html&quot;&gt;spherical law of cosines&lt;/a&gt;. &lt;/p&gt;
+
+&lt;p&gt;Given the following table where &lt;code&gt;LATITUDE&lt;/code&gt; and &lt;code&gt;LONGITUDE&lt;/code&gt; are columns that contain latitude and longitude coordinate data:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LOCATIONS&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;DESCRIPTION&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;varchar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;LATITUDE&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;LONGITUDE&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;So let’s say we wanted to find locations near the Empire State Building in New York City. The Empire State Building is located at &lt;code&gt;40.7484405,-73.9856644&lt;/code&gt;&lt;/p&gt;
+
+&lt;iframe src=&quot;https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3022.6175398570613!2d-73.9856644!3d40.7484405!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire+State+Building!5e0!3m2!1sen!2sus!4v1438532564350&quot; height=&quot;450&quot; frameborder=&quot;0&quot; style=&quot;width:100% !important;border:0;display:block;&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;p&gt;We can then use the following SQL statement to see all locations that are within 10 miles of &lt;code&gt;40.7484405,-73.9856644&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// RADIUS OF EARTH IN MILES is 3963.1676&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// SEARCH RADIUS IN MILES is 10&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; 
+&lt;span class=&quot;n&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LOCATIONS&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ACOS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SIN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RADIANS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LATITUDE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SIN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RADIANS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;40.7484405&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; 
+ &lt;span class=&quot;n&quot;&gt;COS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RADIANS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LATITUDE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;COS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RADIANS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;40.7484405&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;COS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RADIANS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;73.9856644&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RADIANS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LONGITUDE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;3963.1676&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;And there you have it. This SQL Select statement would pull back all records from a locations table that are less than 10 miles from your latitude and longitude &lt;code&gt;40.7484405,-73.9856644&lt;/code&gt;. This could also be adapted for Excel spreadsheets or your own database table of location data. Just keep in mind that you’ll need to convert your latitude and longitude from degrees to radians and that the radius of the earth, in miles, is 3963.1676 miles. &lt;/p&gt;
+
+&lt;p&gt;Hope this helps!
+- Mike&lt;/p&gt;
+</description>
+        <pubDate>Wed, 15 Jul 2015 18:46:00 -0400</pubDate>
+        <link>http://traversoft.com/blog/2015/07/15/determine-nearby-locations/</link>
+        <guid isPermaLink="true">http://traversoft.com/blog/2015/07/15/determine-nearby-locations/</guid>
+      </item>
+    
+  </channel>
+</rss>

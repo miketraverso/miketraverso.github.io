@@ -1,0 +1,55 @@
+---
+layout: default
+---
+
+<header class="post-header">
+	<h1>{{ page.title }}</h1>
+</header>
+
+<div class="posts-home">
+  	<ul class="posts">
+	    {% for post in site.posts %}
+			{% for tag in post.tags %}
+	  			{% if tag == page.tag %}
+	
+				<li>
+					<div class="container">
+					    <div class="row-fluid">			    
+							<div class="col-lg-3 col-md-4 col-sm-12 col-xs-12 text-center">
+								{% if post.thumbnail != nil %}
+									<img class="thumbnail img-responsive center-block" src="{{ post.thumbnail }}">
+								{% endif %}
+							</div>
+							<div class="col-lg-9 col-md-8 col-sm-12 col-xs-12">
+							    <div class="row">
+							        <span class="post-date"><i class="fa fa-small fa-clock-o"></i> {{ post.date | date: "%-d %b %Y" }}</span>
+									<a class="post-link" href="{{ post.url | prepend: site.url }}">{{ post.title }}</a>
+									    {% include social.html %}
+			
+									<p>{{ post.content | strip_html | truncatewords: 100 }} 
+										<a class="post-link-small btn" href="{{ post.url | prepend: site.url }}"> Read more</a>
+									</p>
+							    </div>
+							</div>
+					    </div>
+					</div>
+					<hr/>			
+				</li>
+				{% endif %}
+			{% endfor %}
+	    {% endfor %}
+
+  	</ul>
+  
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- Traversoft Blog -->
+	<ins class="adsbygoogle"
+	     style="display:block"
+	     data-ad-client="ca-pub-4406878197705956"
+	     data-ad-slot="1304820626"
+	     data-ad-format="auto"></ins>
+	<script>
+	(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+	
+</div>

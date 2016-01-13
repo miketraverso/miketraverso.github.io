@@ -1,0 +1,25 @@
+# Site settings
+title: traversoft
+email: info@traversoft.com
+description: "We handle iOS and Android development projects of all sorts. We can also help you implement an HTML5/CSS webapp with either a C# or Java backend. Whatever your mobile app needs are we've got the skills to make it happen."
+baseurl: ""
+url: "http://traversoft.com/blog"
+pygments: true
+
+sitemap:
+    file: "/sitemap.xml"
+    exclude:
+        - "/atom.xml"
+        - "/feed.xml"
+        - "/feed/index.xml"
+    include_posts:
+        - "/index.html"
+    change_frequency_name: "change_frequency"
+    priority_name: "priority"
+    
+# Build settings
+markdown: kramdown
+permalink: pretty
+paginate: 10
+paginate_path: "/blog/page:num/"
+

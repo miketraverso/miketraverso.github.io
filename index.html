@@ -1,0 +1,75 @@
+---
+layout: default
+---
+ 
+<div class="posts-home">
+  <ul class="posts">
+    {% for post in paginator.posts %}
+      <li>
+
+		<div class="container">
+		    <div class="row-fluid">			    
+				<div class="col-lg-3 col-md-4 col-sm-12 col-xs-12 text-center">
+					{% if post.thumbnail != nil %}
+						<img class="thumbnail img-responsive center-block" src="{{ post.thumbnail }}">
+					{% endif %}
+				</div>
+				<div class="col-lg-9 col-md-8 col-sm-12 col-xs-12">
+				    <div class="row">
+				        <span class="post-date"><i class="fa fa-small fa-clock-o"></i> {{ post.date | date: "%-d %b %Y" }}</span>
+						<a class="post-link" href="{{ post.url | prepend: site.url }}">{{ post.title }}</a>
+						    {% include social.html %}
+
+						<p>{{ post.content | strip_html | truncatewords: 100 }} 
+							<a class="post-link-small btn" href="{{ post.url | prepend: site.url }}"> Read more</a>
+						</p>
+				    </div>
+				</div>
+		    </div>
+		</div>
+		<hr/>
+      </li>
+    {% endfor %}
+  </ul>
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- Traversoft Blog -->
+	<ins class="adsbygoogle"
+	     style="display:block"
+	     data-ad-client="ca-pub-4406878197705956"
+	     data-ad-slot="1304820626"
+	     data-ad-format="auto"></ins>
+	<script>
+	(adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+
+
+{% if paginator.total_pages > 1 %}
+<div class="pagination">
+  {% if paginator.previous_page %}
+    <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&laquo; Prev</a>
+  {% else %}
+    <span>&laquo; Prev</span>
+  {% endif %}
+
+  {% for page in (1..paginator.total_pages) %}
+    {% if page == paginator.page %}
+      <em>{{ page }}</em>
+    {% elsif page == 1 %}
+      <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">{{ page }}</a>
+    {% else %}
+      <a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}">{{ page }}</a>
+    {% endif %}
+  {% endfor %}
+
+  {% if paginator.next_page %}
+    <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Next &raquo;</a>
+  {% else %}
+    <span>Next &raquo;</span>
+  {% endif %}
+</div>
+{% endif %}
+
+  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+
+</div>
