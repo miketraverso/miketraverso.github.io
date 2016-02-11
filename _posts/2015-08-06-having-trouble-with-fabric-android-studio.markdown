@@ -12,7 +12,7 @@ Fabric, (www.fabric.io) is the new umbrella webapp from Twitter that incorporate
 
 Today though I came across a bit of a problem getting Fabric and the Crashlytics API properly installed in my version of Android Studio. A bit of background on my situation. I've got an Android only, libgdx based, project running with the latest stable Android Studio (v1.3.0.10). LibGDX allows you to create projects that run cross platform. Web, iOS, Android, Windows, Mac... heck even Blackberry. One of the nasty results of this is that there are multiple projects with multiple `build.gradle` files. Which probably led to my issue :
 
-![Android Studio with Gradle build error]({{ site.baseurl }}/images/gradle-error.png){: .img-responsive .center-block }
+![Android Studio with Gradle build error]({{ site.baseurl }}/blog/images/gradle-error.png){: .img-responsive .center-block }
 
 Basically my AndroidLauncher.java, which is my app's entry point, where I am calling the Fabric setup methods, complained that it couldn't find teh Crashlyitcs and Fabric packages. Ruh-roh right? 
 

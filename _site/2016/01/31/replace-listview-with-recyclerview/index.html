@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Replacing ListView with RecyclerView</title>
+    <meta name="author" content="Traversoft Software Inc" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content=" How to replace ListView with RecyclerView in Android. Android RecyclerView tutorial. Android tutorial for RecyclerView. Android UI and replacing ListView with RecyclerView. ">
+    <meta name="robots" content="index">
+    <link rel="icon"  type="image/ico" href="/images/favicon-2.ico">
+    <title>Traversoft</title>
+
+<!-- 	    <title>Replacing ListView with RecyclerView</title> -->
+    <link rel="canonical" href="//traversoft.com/blog//2016/01/31/replace-listview-with-recyclerview/">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href='//fonts.googleapis.com/css?family=Droid+Serif:400,700' rel='stylesheet' type='text/css'>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/blog-styles.css">
+    <link href="/css/rrssb.css" rel="stylesheet" />
+
+</head>
+
+
+    <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div id="navbar-container" class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+		  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-main">
+		    <span class="sr-only">Toggle navigation</span>
+		    <span class="icon-bar"></span>
+		    <span class="icon-bar"></span>
+		    <span class="icon-bar"></span>
+		  </button>
+		  <div id="logo-text">
+		  	<a class="navbar-brand mirror" href="http://www.traversoft.com">traversoft</a>
+		  </div>
+		</div>
+	
+		<div class="collapse navbar-collapse" id="navbar-collapse-main">
+		  <ul id="nav-list" class="nav navbar-nav navbar-right">
+		    <li><a href="http://traversoft.com" data-toggle="collapse" data-target="#navbar-collapse-main">Home</a></li>
+		    <li><a href="https://miketraverso.github.io" data-toggle="collapse" data-target="#navbar-collapse-main">Blog</a></li>
+			<li><a href="http://traversoft.com/#about-section" data-toggle="collapse" data-target="#navbar-collapse-main">About</a></li>
+		    <li><a href="http://traversoft.com/#services-section" data-toggle="collapse" data-target="#navbar-collapse-main">Services</a></li>
+		    <li><a href="http://traversoft.com/#contactus-subsection" data-toggle="collapse" data-target="#navbar-collapse-main">Contact</a></li>
+		  </ul>
+		</div><!-- /.navbar-collapse -->
+	</div><!-- /.container-fluid -->
+</nav>
+
+    <div class="container">
+      <div class="row-fluid">
+	      <div class="col-sm-12">
+		  <div class="post">
+
+  	<header class="post-header">
+	    <h1>Replacing ListView with RecyclerView</h1>
+			
+	    <p class="meta">
+		    <span class="post-date"><i class="fa fa-small fa-clock-o"></i> 31 Jan 2016</span>
+		    
+		</p>    
+		
+		
+			<span class="label custom-tag"><a href="//traversoft.com/blog//tag/android">android</a></span>
+		
+			<span class="label custom-tag"><a href="//traversoft.com/blog//tag/programming">programming</a></span>
+		
+			<span class="label custom-tag"><a href="//traversoft.com/blog//tag/development">development</a></span>
+		
+			<span class="label custom-tag"><a href="//traversoft.com/blog//tag/UI">UI</a></span>
+		
+			<span class="label custom-tag"><a href="//traversoft.com/blog//tag/UX">UX</a></span>
+		
+			<span class="label custom-tag"><a href="//traversoft.com/blog//tag/materialdesign">materialdesign</a></span>
+		
+			<span class="label custom-tag"><a href="//traversoft.com/blog//tag/animation">animation</a></span>
+		
+	
+		<p></p>	
+		<div id="social">
+			<ul class="rrssb-buttons clearfix">
+				<li class="rrssb-facebook">
+		    		<a href="https://www.facebook.com/sharer/sharer.php?u=//traversoft.com/blog//2016/01/31/replace-listview-with-recyclerview/" class="popup">
+					<span class="rrssb-icon">
+		        	<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" width="29" height="29" viewBox="0 0 29 29"><path d="M26.4 0H2.6C1.714 0 0 1.715 0 2.6v23.8c0 .884 1.715 2.6 2.6 2.6h12.393V17.988h-3.996v-3.98h3.997v-3.062c0-3.746 2.835-5.97 6.177-5.97 1.6 0 2.444.173 2.845.226v3.792H21.18c-1.817 0-2.156.9-2.156 2.168v2.847h5.045l-.66 3.978h-4.386V29H26.4c.884 0 2.6-1.716 2.6-2.6V2.6c0-.885-1.716-2.6-2.6-2.6z" class="cls-2" fill-rule="evenodd"/></svg>
+					</span>
+					</a>
+			</li>  
+		    <li class="rrssb-twitter">
+		        <a href="https://twitter.com/intent/tweet?text=Replacing ListView with RecyclerView%20//traversoft.com/blog//2016/01/31/replace-listview-with-recyclerview/" class="popup">
+		        <span class="rrssb-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path d="M24.253 8.756C24.69 17.08 18.297 24.182 9.97 24.62c-3.122.162-6.22-.646-8.86-2.32 2.702.18 5.375-.648 7.507-2.32-2.072-.248-3.818-1.662-4.49-3.64.802.13 1.62.077 2.4-.154-2.482-.466-4.312-2.586-4.412-5.11.688.276 1.426.408 2.168.387-2.135-1.65-2.73-4.62-1.394-6.965C5.574 7.816 9.54 9.84 13.802 10.07c-.842-2.738.694-5.64 3.434-6.48 2.018-.624 4.212.043 5.546 1.682 1.186-.213 2.318-.662 3.33-1.317-.386 1.256-1.248 2.312-2.4 2.942 1.048-.106 2.07-.394 3.02-.85-.458 1.182-1.343 2.15-2.48 2.71z"/></svg></span>
+		        </a>
+		    </li>
+		    <li class="rrssb-linkedin" data-initwidth="14.285714285714286" data-size="54" style="width: 14.2857%;">
+	          <!-- Replace href with your meta and URL information -->
+	          <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=//traversoft.com/blog//2016/01/31/replace-listview-with-recyclerview/&amp;title=Replacing ListView with RecyclerView&amp;summary=So if you’ve ever written an Android app, chances are that you’ve used a ListView. If you’re new to Android development, ListView is a common...%20by%20Traversoft%20Software" class="popup">
+	            <span class="rrssb-icon">
+	              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+	                <path d="M25.424 15.887v8.447h-4.896v-7.882c0-1.98-.71-3.33-2.48-3.33-1.354 0-2.158.91-2.514 1.802-.13.315-.162.753-.162 1.194v8.216h-4.9s.067-13.35 0-14.73h4.9v2.087c-.01.017-.023.033-.033.05h.032v-.05c.65-1.002 1.812-2.435 4.414-2.435 3.222 0 5.638 2.106 5.638 6.632zM5.348 2.5c-1.676 0-2.772 1.093-2.772 2.54 0 1.42 1.066 2.538 2.717 2.546h.032c1.71 0 2.77-1.132 2.77-2.546C8.056 3.593 7.02 2.5 5.344 2.5h.005zm-2.48 21.834h4.896V9.604H2.867v14.73z"></path>
+	              </svg>
+	            </span>
+	          </a>
+	        </li>
+	        <li class="rrssb-email">
+		    	<a href="mailto:?subject=Replacing ListView with RecyclerView&amp;body=So if you’ve ever written an Android app, chances are that you’ve used a ListView. If you’re new to Android development, ListView is a common...%20by%20Traversoft%20Software.%20Read%20more%20here:%20//traversoft.com/blog//2016/01/31/replace-listview-with-recyclerview/">
+						<span class="rrssb-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path d="M20.11 26.147c-2.335 1.05-4.36 1.4-7.124 1.4C6.524 27.548.84 22.916.84 15.284.84 7.343 6.602.45 15.4.45c6.854 0 11.8 4.7 11.8 11.252 0 5.684-3.193 9.265-7.398 9.3-1.83 0-3.153-.934-3.347-2.997h-.077c-1.208 1.986-2.96 2.997-5.023 2.997-2.532 0-4.36-1.868-4.36-5.062 0-4.75 3.503-9.07 9.11-9.07 1.713 0 3.7.4 4.6.972l-1.17 7.203c-.387 2.298-.115 3.3 1 3.4 1.674 0 3.774-2.102 3.774-6.58 0-5.06-3.27-8.994-9.304-8.994C9.05 2.87 3.83 7.545 3.83 14.97c0 6.5 4.2 10.2 10 10.202 1.987 0 4.09-.43 5.647-1.245l.634 2.22zM16.647 10.1c-.31-.078-.7-.155-1.207-.155-2.572 0-4.596 2.53-4.596 5.53 0 1.5.7 2.4 1.9 2.4 1.44 0 2.96-1.83 3.31-4.088l.592-3.72z"/></svg></span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	
+	</header>
+
+	<article class="post-content">
+		<p>So if you’ve ever written an Android app, chances are that you’ve used a ListView. If you’re new to Android development, ListView is a common view that allows you to display in a table like view. Here’s a sample of what a ListView looks like running on an Android device. These views are similar in that they allow developers to display a collection of items in a table, or list, that can be scrolled through. It’s a very common UI component.</p>
+
+<p><img src="/blog/images/favebakes-intro.png" alt="Initial UI Layout" class="img-responsive center-block" /></p>
+
+<h2 id="an-introduction-to-fave-bakes"><strong>An introduction to Fave Bakes</strong></h2>
+<p>Our existing app displays a list of favorite bakeries in the area. The bakery name, phone number, address, website and logo appear to the user and allow them to peruse a number of local bakeries.  So let’s take a look at our <code>Bakery</code> model.</p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Bakery</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">bakeryName</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">description</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">phoneNumber</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">websiteUrl</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">address</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="n">Bitmap</span> <span class="n">logo</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Bakery</span><span class="o">(</span><span class="n">String</span> <span class="n">bakeryName</span><span class="o">,</span>
+                  <span class="n">String</span> <span class="n">description</span><span class="o">,</span>
+                  <span class="n">String</span> <span class="n">phoneNumber</span><span class="o">,</span>
+                  <span class="n">String</span> <span class="n">websiteUrl</span><span class="o">,</span>
+                  <span class="n">String</span> <span class="n">address</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="na">bakeryName</span> <span class="o">=</span> <span class="n">bakeryName</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">description</span> <span class="o">=</span> <span class="n">description</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">address</span> <span class="o">=</span> <span class="n">address</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">phoneNumber</span> <span class="o">=</span> <span class="n">phoneNumber</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">websiteUrl</span> <span class="o">=</span> <span class="n">websiteUrl</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></div>
+
+<p>While not a true POJO we just wanted something simple for our scenario. We load all the bakery data into this model so that we can display it in a ListView. So far pretty straightforward. Speaking of which, here’s our activity layout:</p>
+
+<div class="highlight"><pre><code class="xml"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+
+<span class="nt">&lt;RelativeLayout</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+    <span class="na">xmlns:app=</span><span class="s">&quot;http://schemas.android.com/apk/res-auto&quot;</span>
+    <span class="na">xmlns:tools=</span><span class="s">&quot;http://schemas.android.com/tools&quot;</span>
+    <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+    <span class="na">android:layout_height=</span><span class="s">&quot;match_parent&quot;</span>
+    <span class="na">android:paddingBottom=</span><span class="s">&quot;@dimen/spacer_10&quot;</span>
+    <span class="na">android:paddingLeft=</span><span class="s">&quot;@dimen/spacer_16&quot;</span>
+    <span class="na">android:paddingRight=</span><span class="s">&quot;@dimen/spacer_16&quot;</span>
+    <span class="na">android:paddingTop=</span><span class="s">&quot;@dimen/spacer_10&quot;</span>
+    <span class="na">android:background=</span><span class="s">&quot;@color/lightGray&quot;</span>
+    <span class="na">app:layout_behavior=</span><span class="s">&quot;@string/appbar_scrolling_view_behavior&quot;</span>
+    <span class="na">tools:context=</span><span class="s">&quot;.activities.BakeryListingsActivity&quot;</span>
+    <span class="na">tools:showIn=</span><span class="s">&quot;@layout/activity_bakery_listings&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;ListView&gt;</span>
+        android:id=&quot;@+id/listings_view&quot;
+        android:layout_width=&quot;match_parent&quot;
+        android:layout_height=&quot;match_parent&quot;
+        android:background=&quot;@color/lightGray&quot;&gt;
+    <span class="nt">&lt;/ListView&gt;</span>
+
+<span class="nt">&lt;/RelativeLayout&gt;</span></code></pre></div>
+
+<p>In <strong>FaveBakes</strong> we’re dealing with a very simple activity that just has a <code>ListView</code> that takes up the screen, sets the background color and adds a padding to the top and bottom, left and right. Our list item view for each item of the <code>ListView</code> is a bit more complicated. It displays the bakery image to the left of the bakery name, address, phone number, website and underneath all of that is a description of the bakery. Here’s what our <strong>list_item_bakery.xml</strong> looks like and the layout xml that creates it.</p>
+
+<p><img src="/blog/images/bakery_item.png" alt="Sample Bakery Item Layout" class="img-responsive center-block" /></p>
+
+<div class="highlight"><pre><code class="xml"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<span class="nt">&lt;LinearLayout</span>
+    <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+          <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+          <span class="na">android:layout_height=</span><span class="s">&quot;match_parent&quot;</span>
+          <span class="na">android:orientation=</span><span class="s">&quot;vertical&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;RelativeLayout</span>
+        <span class="na">android:id=</span><span class="s">&quot;@+id/bakery_info&quot;</span>
+        <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+        <span class="na">android:layout_height=</span><span class="s">&quot;match_parent&quot;</span>
+        <span class="na">android:layout_alignParentLeft=</span><span class="s">&quot;true&quot;</span>
+        <span class="na">android:layout_alignParentTop=</span><span class="s">&quot;true&quot;</span>
+        <span class="na">android:padding=</span><span class="s">&quot;@dimen/spacer_5&quot;</span>
+        <span class="na">android:background=</span><span class="s">&quot;@color/white&quot;</span><span class="nt">&gt;</span>
+
+        <span class="nt">&lt;RelativeLayout</span>
+            <span class="na">android:id=</span><span class="s">&quot;@+id/logo_layout&quot;</span>
+            <span class="na">android:layout_width=</span><span class="s">&quot;90dp&quot;</span>
+            <span class="na">android:layout_height=</span><span class="s">&quot;90dp&quot;</span><span class="nt">&gt;</span>
+
+            <span class="nt">&lt;ImageView</span>
+                <span class="na">android:id=</span><span class="s">&quot;@+id/bakery_logo&quot;</span>
+                <span class="na">android:layout_width=</span><span class="s">&quot;fill_parent&quot;</span>
+                <span class="na">android:layout_height=</span><span class="s">&quot;fill_parent&quot;</span> <span class="nt">/&gt;</span>
+
+        <span class="nt">&lt;/RelativeLayout&gt;</span>
+
+        <span class="nt">&lt;TextView</span>
+            <span class="na">android:id=</span><span class="s">&quot;@+id/bakery_name&quot;</span>
+            <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+            <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+            <span class="na">android:layout_marginTop=</span><span class="s">&quot;@dimen/spacer_10&quot;</span>
+            <span class="na">android:gravity=</span><span class="s">&quot;center_vertical&quot;</span>
+            <span class="na">android:textSize=</span><span class="s">&quot;@dimen/default_font_size&quot;</span>
+            <span class="na">android:layout_toEndOf=</span><span class="s">&quot;@+id/logo_layout&quot;</span> <span class="nt">/&gt;</span>
+
+        <span class="nt">&lt;TextView</span>
+            <span class="na">android:id=</span><span class="s">&quot;@+id/bakery_address&quot;</span>
+            <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+            <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+            <span class="na">android:layout_below=</span><span class="s">&quot;@+id/bakery_name&quot;</span>
+            <span class="na">android:textSize=</span><span class="s">&quot;@dimen/default_font_size&quot;</span>
+            <span class="na">android:layout_toRightOf=</span><span class="s">&quot;@+id/logo_layout&quot;</span> <span class="nt">/&gt;</span>
+
+        <span class="nt">&lt;TextView</span>
+            <span class="na">android:id=</span><span class="s">&quot;@+id/bakery_phone&quot;</span>
+            <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+            <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+            <span class="na">android:layout_below=</span><span class="s">&quot;@+id/bakery_address&quot;</span>
+            <span class="na">android:textSize=</span><span class="s">&quot;@dimen/default_font_size&quot;</span>
+            <span class="na">android:layout_toRightOf=</span><span class="s">&quot;@+id/logo_layout&quot;</span> <span class="nt">/&gt;</span>
+
+        <span class="nt">&lt;TextView</span>
+            <span class="na">android:id=</span><span class="s">&quot;@+id/bakery_website&quot;</span>
+            <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+            <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+            <span class="na">android:layout_below=</span><span class="s">&quot;@+id/bakery_phone&quot;</span>
+            <span class="na">android:textSize=</span><span class="s">&quot;@dimen/default_font_size&quot;</span>
+            <span class="na">android:layout_toRightOf=</span><span class="s">&quot;@+id/logo_layout&quot;</span> <span class="nt">/&gt;</span>
+
+        <span class="nt">&lt;TextView</span>
+            <span class="na">android:id=</span><span class="s">&quot;@+id/bakery_description&quot;</span>
+            <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+            <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+            <span class="na">android:textSize=</span><span class="s">&quot;@dimen/default_font_size&quot;</span>
+            <span class="na">android:layout_below=</span><span class="s">&quot;@id/bakery_website&quot;</span>
+            <span class="na">android:layout_marginBottom=</span><span class="s">&quot;@dimen/spacer_10&quot;</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;/RelativeLayout&gt;</span>
+
+<span class="nt">&lt;/LinearLayout&gt;</span></code></pre></div>
+
+<p>The next part of our existing app that we’ll look at is the Adapter. This app uses an ArrayAdapter of Bakery items to fill the ListView with the details of the individual Bakery objects. Our constructor takes in</p>
+
+<ul>
+  <li>the context</li>
+  <li>the resource of the item layout and</li>
+  <li>list of the Bakery objects we want to display.</li>
+</ul>
+
+<p>We override the <code>public View getView</code> method to display our bakery information in each item of the ListView. (2) First we are going to see if we’ve already inflated the layout of the item. Inflating Android layouts is a resource intensive activity so if we’ve already done it before we don’t need to do it again. Simply we can reuse what we have already inflated and just change the values. (3) We get the bakery we want to display by looking up the position in the list of Bakery objects we passed in. (4) Then we use the Bakery object at that position to set the data for the view. (5) Finally, we return the fully configured View.</p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BakeryAdapter</span> <span class="kd">extends</span> <span class="n">ArrayAdapter</span><span class="o">&lt;</span><span class="n">Bakery</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Bakery</span><span class="o">&gt;</span> <span class="n">bakeries</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">Context</span> <span class="n">context</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">itemResource</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">BakeryAdapter</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemResource</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Bakery</span><span class="o">&gt;</span> <span class="n">bakeries</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c1">// 1. Initialize our adapter</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">list_item_bakery</span><span class="o">,</span> <span class="n">bakeries</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">bakeries</span> <span class="o">=</span> <span class="n">bakeries</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">context</span> <span class="o">=</span> <span class="n">context</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">itemResource</span> <span class="o">=</span> <span class="n">itemResource</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">getView</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">,</span> <span class="n">View</span> <span class="n">convertView</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c1">// 2. Have we inflated this view before?</span>
+        <span class="n">View</span> <span class="n">itemView</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">convertView</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="c1">// 2a. We have so let&#39;s reuse.</span>
+            <span class="n">itemView</span> <span class="o">=</span> <span class="n">convertView</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">else</span> <span class="o">{</span>
+
+            <span class="c1">// 2b. We have NOT so let&#39;s inflate</span>
+            <span class="n">LayoutInflater</span> <span class="n">inflater</span> <span class="o">=</span> <span class="o">(</span><span class="n">LayoutInflater</span><span class="o">)</span> <span class="n">context</span><span class="o">.</span><span class="na">getSystemService</span><span class="o">(</span><span class="n">Context</span><span class="o">.</span><span class="na">LAYOUT_INFLATER_SERVICE</span><span class="o">);</span>
+            <span class="n">itemView</span> <span class="o">=</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">itemResource</span><span class="o">,</span> <span class="n">parent</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="c1">// 3. Get the bakery to appear in this item</span>
+        <span class="n">Bakery</span> <span class="n">bakery</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">bakeries</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">bakery</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="c1">// 4. Inflate the UI widgets</span>
+            <span class="n">ImageView</span> <span class="n">bakeryLogo</span> <span class="o">=</span> <span class="o">(</span><span class="n">ImageView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">bakery_logo</span><span class="o">);</span>
+            <span class="n">TextView</span> <span class="n">bakeryName</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">bakery_name</span><span class="o">);</span>
+            <span class="n">TextView</span> <span class="n">bakeryAddress</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">bakery_address</span><span class="o">);</span>
+            <span class="n">TextView</span> <span class="n">bakeryDescription</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">bakery_description</span><span class="o">);</span>
+            <span class="n">TextView</span> <span class="n">bakeryPhone</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">bakery_phone</span><span class="o">);</span>
+            <span class="n">TextView</span> <span class="n">bakeryWebsite</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">bakery_website</span><span class="o">);</span>
+
+            <span class="c1">// 5. Set the UI widgets with appropriate data from the Bakery model</span>
+            <span class="n">bakeryName</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">bakery</span><span class="o">.</span><span class="na">bakeryName</span><span class="o">);</span>
+            <span class="n">bakeryAddress</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">bakery</span><span class="o">.</span><span class="na">address</span><span class="o">);</span>
+            <span class="n">bakeryPhone</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">bakery</span><span class="o">.</span><span class="na">phoneNumber</span><span class="o">);</span>
+            <span class="n">bakeryWebsite</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">bakery</span><span class="o">.</span><span class="na">websiteUrl</span><span class="o">);</span>
+            <span class="n">bakeryDescription</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">bakery</span><span class="o">.</span><span class="na">description</span><span class="o">);</span>
+            <span class="n">bakeryLogo</span><span class="o">.</span><span class="na">setImageBitmap</span><span class="o">(</span><span class="n">bakery</span><span class="o">.</span><span class="na">logo</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="n">itemView</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></div>
+
+<p>Now it’s time to take a look at our Activity code to see how the ArrayAdapter<bakery> is tied to the ListView we saw in our layout file earlier. In our `onCreate` method we (1) inflate our activity and (2) load up our bakery data. (3) We then instantiate our `BakeryAdapter` that we just looked at, passing in the activity (for Context), the resource ID of the layout of the item we want to use, and the `List<bakery>` we want to display. (4) Next, inflating our ListView allows us to set the adapter on it so that our ListView knows what data, and how, to display.</bakery></bakery></p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BakeryListingsActivity</span> <span class="kd">extends</span> <span class="n">AppCompatActivity</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="n">ListView</span> <span class="n">listingsView</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Bakery</span><span class="o">&gt;</span> <span class="n">bakeries</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+
+        <span class="c1">// 1. Inflate the activity &amp; perform app styling</span>
+        <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_bakery_listings</span><span class="o">);</span>
+        <span class="n">setupActionBarTheme</span><span class="o">();</span>
+
+        <span class="c1">// 2. Load the Bakery data</span>
+        <span class="n">loadBakeries</span><span class="o">();</span>
+
+        <span class="c1">// 3. Initialize the Bakery adapter</span>
+        <span class="n">BakeryAdapter</span> <span class="n">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BakeryAdapter</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">list_item_bakery</span><span class="o">,</span> <span class="n">bakeries</span><span class="o">);</span>
+
+        <span class="c1">// 4. Inflate our ListView and set the adapter on it</span>
+        <span class="n">listingsView</span> <span class="o">=</span> <span class="o">(</span><span class="n">ListView</span><span class="o">)</span><span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">listings_view</span><span class="o">);</span>
+        <span class="n">listingsView</span><span class="o">.</span><span class="na">setAdapter</span><span class="o">(</span><span class="n">adapter</span><span class="o">);</span>
+
+        <span class="c1">// 5. Handle the click</span>
+        <span class="n">listingsView</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="n">View</span> <span class="n">parentRow</span> <span class="o">=</span> <span class="o">(</span><span class="n">View</span><span class="o">)</span> <span class="n">v</span><span class="o">.</span><span class="na">getParent</span><span class="o">();</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">parentRow</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+
+                    <span class="n">ListView</span> <span class="n">listView</span> <span class="o">=</span> <span class="o">(</span><span class="n">ListView</span><span class="o">)</span> <span class="n">parentRow</span><span class="o">.</span><span class="na">getParent</span><span class="o">();</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">listView</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+
+                        <span class="kt">int</span> <span class="n">position</span> <span class="o">=</span> <span class="n">listView</span><span class="o">.</span><span class="na">getPositionForView</span><span class="o">(</span><span class="n">parentRow</span><span class="o">);</span>
+
+                        <span class="n">Bakery</span> <span class="n">bakery</span> <span class="o">=</span> <span class="n">bakeries</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">);</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="n">bakery</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+
+                            <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="s">&quot;Clicked on &quot;</span> <span class="o">+</span> <span class="n">bakery</span><span class="o">.</span><span class="na">bakeryName</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+
+    <span class="o">}</span>
+
+    <span class="c1">// Loads bakery data into List&lt;Bakery&gt;</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">loadBakeries</span><span class="o">()</span> <span class="o">{...}</span>
+
+    <span class="c1">// Sets the app title to use a custom font</span>
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">setupActionBarTheme</span><span class="o">()</span> <span class="o">{...}</span>
+<span class="o">}</span></code></pre></div>
+
+<p>So that’s basically it. Here’s a GIF showing what the app looks like once launched. For a complete listing of this project go ahead and check out <strong>TODO</strong> on GitHub.</p>
+
+<p><img src="/blog/images/favebakes-listview.gif" alt="FaveBakes ListView" class="img-responsive center-block" /></p>
+
+<h2 id="updating-to-recyclerview"><strong>Updating to RecyclerView</strong></h2>
+<p>We’ve just reviewed how ListView is used in Android. So now let’s do away with the old and bring in the new… bring on the RecyclerView!</p>
+
+<h2 id="ugh-whyyyy"><strong>Ugh, whyyyy?</strong></h2>
+<p>So why would we want to replace ListView with <code>RecyclerView</code>? Well <code>RecyclerView</code> is, as we’ll come to see, very flexible. <code>RecyclerView</code> also forces you to implement a much more efficient table widget. Finally, <code>RecyclerView</code> lets you animate and decorate items in your widget a bit simpler.</p>
+
+<p>RecyclerView is able to be more flexible than the older ListView because it does less. ListView handles the touch events such as scrolling and tapping or long pressing an item in the list. ListView positions items on the screen and also handles the most basic of animations that occur after adding or removing items in the list. RecyclerView delegates this functionality out to other classes. So where ListView handled</p>
+
+<ul>
+  <li>Setting the item’s position</li>
+  <li>Handling user interaction</li>
+  <li>Basic animation</li>
+</ul>
+
+<p>RecyclerView leverages the following classes to provide the same functionality.</p>
+
+<ul>
+  <li>RecyclerView.ViewHolder to handle the item’s content/user interaction and where in the RecyclerView it belongs.</li>
+  <li>RecyclerView.Adapter to provide binding between the items and the underlying data.</li>
+  <li>RecyclerView.LayoutManager to set how the items are laid out.</li>
+  <li>RecyclerView.ItemAnimator to define animations of items.</li>
+  <li>RecyclerView.ItemDecorator to decorate the items.</li>
+</ul>
+
+<p>Let’s take a closer look at each of these classes.</p>
+
+<h2 id="recyclerviewviewholder"><strong>RecyclerView.ViewHolder</strong></h2>
+
+<p>The ViewHolder may not be entirely new to you. The ViewHolder existed prior and was used by ListView to access items without having to look them up with the <code>findViewById()</code> method which could prove costly when scrolling lots of items. The ViewHolder is extended by the RecyclerView.Adapter to bind the underlying data set to the view of the item.</p>
+
+<h2 id="recyclerviewadapter"><strong>RecyclerView.Adapter</strong></h2>
+
+<p>This is likely to be the most familiar part of the RecyclerView. The Adapter links the data in your data set with the items of the view. In our example we are going to be displaying a list of bakeries. Each item will have to display the bakery name, a description, an address, phone number and an image of the bakery logo. Each store item, when tapped will then prompt the user to dial the bakery.</p>
+
+<h2 id="recyclerviewlayoutmanager"><strong>RecyclerView.LayoutManager</strong></h2>
+
+<p>The LayoutManager is responsible for setting the size and position of the items in the <code>RecyclerView</code> as they appear in the <code>RecyclerView</code>. The API provides some baked in LayoutManager’s for displaying items like a list (<code>LinearLayoutManager</code>), in a uniform positioned grid (<code>GridLayoutManager</code>) or a staggered position/size grid (<code>StaggeredGridLayoutManager</code>). We’ll cover the LinearLayoutManager since we’re converting a ListView app to the <code>RecyclerView</code>.</p>
+
+<h2 id="recyclerviewitemdecorator"><strong>RecyclerView.ItemDecorator</strong></h2>
+
+<p>With the ItemDecorator we’ll be able to customize how our items get displayed. Want to add spacing between items on your list? Want to add a drop shadow? a border? all of the above? ItemDecorator’s can be added to your <code>RecyclerView</code> so that if you needed just spacing or borders you can add multiple decorators. We’re going to loosely define our decorators and see how we can leverage them in our project.</p>
+
+<h2 id="recyclerviewitemanimator"><strong>RecyclerView.ItemAnimator</strong></h2>
+
+<p>ItemAnimator’s responsibility is to … animate the items. :) When items are added to, or removed from, the <code>RecyclerView</code> the ItemAnimator dictates how the item is animated in, or out, of view. Creating a custom ItemAnimator is beyond the scope of this post but we’ll take advantage of some baked in ItemAnimators. A fantastic library packed full of ItemAnimators can be found over at <a href="https://github.com/wasabeef/recyclerview-animators">RecyclerView Animations by Daichi Furiya</a>.</p>
+
+<h2 id="lets-get-on-with-it"><strong>Let’s get on with it…</strong></h2>
+<p>So that’s a quick overview of the <code>RecyclerView</code> and it’s components. Now we’re going to go replace the ListView with a <code>RecyclerView</code> leveraging the components we just briefly talked about. Before we can begin though we need to tell our project where to pickup the API to use the RecyclerView. We’ll need to add the following: <code>compile 'com.android.support:recyclerview-v7:+'</code> under the <code>dependencies</code> section.
+If you need help doing this, in Android Studio find the <strong>build.gradle</strong> file in your <strong>Project</strong> view that is under your <strong>app</strong> folder. If you need help figuring which build.gradle this is here’s a screenshot to help you out.</p>
+
+<p><img src="/blog/images/favebakes-update-gradle.png" alt="Update the Gradle" class="img-responsive center-block" /></p>
+
+<p>Once you update the gradle file you’ll need to sync your project with your updated gradle file. This is done by tapping on the button shown below. Android Studio will go out and download the necessary library to your project so that you’ll be able to start using it.</p>
+
+<p><img src="/blog/images/favebakes-update-gradle-btn.png" alt="Update the Gradle" class="img-responsive center-block" /></p>
+
+<p>Since our model is going to stay the same, let’s start with our activity layout file. Our parent layout, RelativeLayout stays exactly the same. We just swap out the ListView for android.support.v7.widget.RecyclerView.</p>
+
+<p>Using the support version of the RecyclerView will allow us to reach many more Android phones. I’ll leave this up to you whether you want to support older versions of Android or just the latest and greatest devices with the latest version of Android.</p>
+
+<p>We keep the id the same so that we don’t have to change that in our code, width, height and background all also stay the same.</p>
+
+<div class="highlight"><pre><code class="xml"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+
+<span class="nt">&lt;RelativeLayout</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+    <span class="na">xmlns:app=</span><span class="s">&quot;http://schemas.android.com/apk/res-auto&quot;</span>
+    <span class="na">xmlns:tools=</span><span class="s">&quot;http://schemas.android.com/tools&quot;</span>
+    <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+    <span class="na">android:layout_height=</span><span class="s">&quot;match_parent&quot;</span>
+    <span class="na">android:paddingBottom=</span><span class="s">&quot;@dimen/spacer_10&quot;</span>
+    <span class="na">android:paddingLeft=</span><span class="s">&quot;@dimen/spacer_16&quot;</span>
+    <span class="na">android:paddingRight=</span><span class="s">&quot;@dimen/spacer_16&quot;</span>
+    <span class="na">android:paddingTop=</span><span class="s">&quot;@dimen/spacer_10&quot;</span>
+    <span class="na">android:background=</span><span class="s">&quot;@color/lightGray&quot;</span>
+    <span class="na">app:layout_behavior=</span><span class="s">&quot;@string/appbar_scrolling_view_behavior&quot;</span>
+    <span class="na">tools:context=</span><span class="s">&quot;.activities.BakeryListingsActivity&quot;</span>
+    <span class="na">tools:showIn=</span><span class="s">&quot;@layout/activity_bakery_listings&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;android.support.v7.widget.RecyclerView</span>
+        <span class="na">android:id=</span><span class="s">&quot;@+id/listings_view&quot;</span>
+        <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
+        <span class="na">android:layout_height=</span><span class="s">&quot;match_parent&quot;</span>
+        <span class="na">android:background=</span><span class="s">&quot;@color/lightGray&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/android.support.v7.widget.RecyclerView&gt;</span>
+
+<span class="nt">&lt;/RelativeLayout&gt;</span></code></pre></div>
+
+<p>Now let’s go back to look at our adapter. Before we can though we need to implement a ViewHolder. Remember from earlier, the ViewHolder helps the Adapter bind data to the item views. Our holder is going to extend RecyclerView.ViewHolder while implementing the View.OnClickListener interface. (1) Our constructor will take a Context and a View. (2) We’ll access our item UI widgets here so we define all of our TextView’s and our ImageView as we did in our ArrayAdapter. We’re basically moving that into our <code>BakeryHolder</code>. The ViewHolder knows about the Bakery it’s bound to so no need to look up other views, figure out the position clicked and look up the bakery tied to that position. (3) Binding is something we need the BakeryHolder to do so we’ll go ahead and create a method called <code>bindBakery</code> that takes in a Bakery object and sets the values of the UI widgets. (5) Lastly, we migrate our <code>onClick</code> implementation into our BakeryHolder. This makes a bit more sense than having it on the ListView.</p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BakeryHolder</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="kd">implements</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ImageView</span> <span class="n">bakeryLogo</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">TextView</span> <span class="n">bakeryName</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">TextView</span> <span class="n">address</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">TextView</span> <span class="n">description</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">TextView</span> <span class="n">phone</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">TextView</span> <span class="n">website</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="n">Bakery</span> <span class="n">bakery</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">Context</span> <span class="n">context</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">BakeryHolder</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="n">View</span> <span class="n">itemView</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="kd">super</span><span class="o">(</span><span class="n">itemView</span><span class="o">);</span>
+
+        <span class="c1">// 1. Set the context</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">context</span> <span class="o">=</span> <span class="n">context</span><span class="o">;</span>
+
+        <span class="c1">// 2. Set up the UI widgets of the holder</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">bakeryLogo</span> <span class="o">=</span> <span class="o">(</span><span class="n">ImageView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">bakery_logo</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">bakeryName</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">bakery_name</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">address</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">bakery_address</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">description</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">bakery_description</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">phone</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">bakery_phone</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">website</span> <span class="o">=</span> <span class="o">(</span><span class="n">TextView</span><span class="o">)</span> <span class="n">itemView</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">bakery_website</span><span class="o">);</span>
+
+        <span class="c1">// 3. Set the &quot;onClick&quot; listener of the holder</span>
+        <span class="n">itemView</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">bindBakery</span><span class="o">(</span><span class="n">Bakery</span> <span class="n">bakery</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c1">// 4. Bind the data to the ViewHolder</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">bakery</span> <span class="o">=</span> <span class="n">bakery</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">bakeryName</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">bakery</span><span class="o">.</span><span class="na">bakeryName</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">address</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">bakery</span><span class="o">.</span><span class="na">address</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">phone</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">bakery</span><span class="o">.</span><span class="na">phoneNumber</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">website</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">bakery</span><span class="o">.</span><span class="na">websiteUrl</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">description</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">bakery</span><span class="o">.</span><span class="na">description</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">bakeryLogo</span><span class="o">.</span><span class="na">setImageBitmap</span><span class="o">(</span><span class="n">bakery</span><span class="o">.</span><span class="na">logo</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c1">// 5. Handle the onClick event for the ViewHolder</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">bakery</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">context</span><span class="o">,</span> <span class="s">&quot;Clicked on &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">bakery</span><span class="o">.</span><span class="na">bakeryName</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span> <span class="o">).</span><span class="na">show</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></div>
+
+<p>Our adapter can now leverage our new BakeryHolder class. In BakeryAdapter, our constructor remains the same as it was before. However, now we extend the RecyclerView.Adapter<bakeryholder> instead of ArrayAdapter<bakery>. As such we'll want to override 3 methods:</bakery></bakeryholder></p>
+
+<ul>
+  <li>public BakeryHolder onCreateViewHolder(ViewGroup parent, int viewType)</li>
+  <li>public void onBindViewHolder(BakeryHolder holder, int position)</li>
+  <li>public int getItemCount()</li>
+</ul>
+
+<p>In onCreateViewHolder, (3) we inflate the view and return a ViewHolder. Unlike ListView, RecyclerView will not call this method again <em>unless</em> if the position of the item changes in the data set, the item itself is invalidated or the new position cannot be determined. If you’re not adding items, removing items, or changing the position of the items in the data set this method should be called once. Nice!</p>
+
+<p>In onBindViewHolder, we (5) access the bakery at the proper position and bind it to the ViewHolder. This is where that “magic” happens that tells an item at a particular position which data to display. Finally we override the getItemCount and return the number of items in our data set.</p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BakeryAdapter</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span><span class="o">&lt;</span><span class="n">BakeryHolder</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Bakery</span><span class="o">&gt;</span> <span class="n">bakeries</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">Context</span> <span class="n">context</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">itemResource</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">BakeryAdapter</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemResource</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Bakery</span><span class="o">&gt;</span> <span class="n">bakeries</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c1">// 1. Initialize our adapter</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">bakeries</span> <span class="o">=</span> <span class="n">bakeries</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">context</span> <span class="o">=</span> <span class="n">context</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">itemResource</span> <span class="o">=</span> <span class="n">itemResource</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 2. Override the onCreateViewHolder method</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">BakeryHolder</span> <span class="nf">onCreateViewHolder</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">parent</span><span class="o">,</span> <span class="kt">int</span> <span class="n">viewType</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c1">// 3. Inflate the view and return the new ViewHolder</span>
+        <span class="n">View</span> <span class="n">view</span> <span class="o">=</span> <span class="n">LayoutInflater</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">parent</span><span class="o">.</span><span class="na">getContext</span><span class="o">())</span>
+                                  <span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">itemResource</span><span class="o">,</span> <span class="n">parent</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">BakeryHolder</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">context</span><span class="o">,</span> <span class="n">view</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// 4. Override the onBindViewHolder method</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onBindViewHolder</span><span class="o">(</span><span class="n">BakeryHolder</span> <span class="n">holder</span><span class="o">,</span> <span class="kt">int</span> <span class="n">position</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c1">// 5. Use position to access the correct Bakery object</span>
+        <span class="n">Bakery</span> <span class="n">bakery</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">bakeries</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">position</span><span class="o">);</span>
+
+        <span class="c1">// 6. Bind the bakery object to the holder</span>
+        <span class="n">holder</span><span class="o">.</span><span class="na">bindBakery</span><span class="o">(</span><span class="n">bakery</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getItemCount</span><span class="o">()</span> <span class="o">{</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">bakeries</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></div>
+
+<p>With our Adapter updated and ViewHolder created we can update our Activity. Our adapter constructor doesn’t change. It still takes a Context, the resource id of the item layout and the data set. (5) We change the type of the listingsView from ListView to RecyclerView. (6) Seeing as our RecyclerView doesn’t change height or width within FaveBakes, we can tell <code>listingsView</code> that it has a fixed size. This is for performance reasons. If your app requires the RecyclerView to change size don’t do this. (9) We now continue to set the adapter of our RecyclerView. Nothing changes here either.</p>
+
+<div class="highlight"><pre><code class="java"><span class="c1">// 3. Initialize the Bakery adapter... unchanged.</span>
+<span class="n">BakeryAdapter</span> <span class="n">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BakeryAdapter</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">list_item_bakery</span><span class="o">,</span> <span class="n">bakeries</span><span class="o">);</span>
+
+<span class="c1">// 4. Initialize ItemAnimator, LayoutManager and ItemDecorators</span>
+
+<span class="c1">// 5. Setup our RecyclerView</span>
+<span class="n">listingsView</span> <span class="o">=</span> <span class="o">(</span><span class="n">RecyclerView</span><span class="o">)</span><span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">listings_view</span><span class="o">);</span>
+
+<span class="c1">// 6. For performance, tell OS RecyclerView won&#39;t change size</span>
+<span class="n">listingsView</span><span class="o">.</span><span class="na">setHasFixedSize</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+
+<span class="c1">// 7. Set the LayoutManager</span>
+
+<span class="c1">// 8. Set the ItemDecorators</span>
+
+<span class="c1">// 9. Attach the adapter to RecyclerView</span>
+<span class="n">listingsView</span><span class="o">.</span><span class="na">setAdapter</span><span class="o">(</span><span class="n">adapter</span><span class="o">);</span></code></pre></div>
+
+<h2 id="now-the-extra-recyclerview-bits"><strong>Now the extra RecyclerView bits</strong></h2>
+<p>Just a few more things to take care of. Namely, we have to setup a LayoutManager. We’ll be setting up ItemDecorators and an ItemAnimator but those are optional for you to setup. Let’s create an instance of a RecyclerView.LayoutManager. As this is an abstract class we will need to implement one of those layout managers we reviewed earlier. In this case as we want to closely replicate the ListView we will use a <code>LinearLayoutManager</code>.</p>
+
+<p>Again these next steps are optional. As it stands now we’ve completely replicated our ListView. Let’s see how easy it is to add vertical spacing between items, add drop shadow to items and animate items. First we’ll define an ItemDecorator to handle vertical spacing between items in the list and then another ItemDecorator to handle a drop shadow. These effects could be combined in one ItemDecorator but I wanted to show you that you can combine ItemDecorators on your RecyclerView to get a desired effect.</p>
+
+<p>For instance, to create your own custom ItemDecorator we’ll extend the  <code>RecyclerView.ItemDecoration</code> class. For adding in some vertical spacing, we override the <code>getItemOffsets</code> method. The <code>outRect</code> parameter that gets passed in lets you access the <code>Rect</code> that the item will take up with no padding. (2) Setting the value of the bottom field on <code>outRect</code> to a value will create an <strong>offset</strong> to that side of the rectangle representing the item. What we do in the VerticalSpaceItemDecorator is check to make sure that the item we’re looking at isn’t the last item in the collection. No need to add a bottom padding to the last item. We could have acheived the same result by adding an offset value to the top field of <code>outRect</code> and not adding that padding to the first item in the collection.</p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">VerticalSpaceItemDecorator</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ItemDecoration</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">verticalSpaceHeight</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">VerticalSpaceItemDecorator</span><span class="o">(</span><span class="kt">int</span> <span class="n">verticalSpaceHeight</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="na">verticalSpaceHeight</span> <span class="o">=</span> <span class="n">verticalSpaceHeight</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">getItemOffsets</span><span class="o">(</span><span class="n">Rect</span> <span class="n">outRect</span><span class="o">,</span>
+                               <span class="n">View</span> <span class="n">view</span><span class="o">,</span>
+                               <span class="n">RecyclerView</span> <span class="n">parent</span><span class="o">,</span>
+                               <span class="n">RecyclerView</span><span class="o">.</span><span class="na">State</span> <span class="n">state</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c1">// 1. Determine if we want to add a spacing decorator</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">parent</span><span class="o">.</span><span class="na">getChildAdapterPosition</span><span class="o">(</span><span class="n">view</span><span class="o">)</span> <span class="o">!=</span> <span class="n">parent</span><span class="o">.</span><span class="na">getAdapter</span><span class="o">().</span><span class="na">getItemCount</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="c1">// 2. Set the bottom offset to the specified height</span>
+            <span class="n">outRect</span><span class="o">.</span><span class="na">bottom</span> <span class="o">=</span> <span class="n">verticalSpaceHeight</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></div>
+
+<p>With a drop shadow, we’ll first create a new drawable and name it <strong>drop_shadow.xml</strong>. Then we’ll create a shape, with a size and color as seen below.</p>
+
+<div class="highlight"><pre><code class="xml"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<span class="nt">&lt;shape</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+    <span class="na">android:shape=</span><span class="s">&quot;rectangle&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;size</span> <span class="na">android:height=</span><span class="s">&quot;4dp&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;solid</span> <span class="na">android:color=</span><span class="s">&quot;@color/gray&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/shape&gt;</span></code></pre></div>
+
+<p>Then we’ll again extend RecyclerView.ItemDecoration in a new class. In our constructor we load the drawable resource we just created. Then in the onDraw mehod that we will override, we’ll make sure we set the drop shadow rectangle to (1) be the same width as the RecyclerView and (2 &amp; 3) iterate through each item to (4) determine the top and bottom constraints of where the drop shadow should be drawn. (5) Once we have the bounds of the drawable for the drop shadow we (6) draw it to the canvas.</p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShadowVerticalSpaceItemDecorator</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ItemDecoration</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="n">Drawable</span> <span class="n">divider</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">ShadowVerticalSpaceItemDecorator</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="kt">int</span> <span class="n">resId</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c1">// Use a custom divider specified by a drawable</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">divider</span> <span class="o">=</span> <span class="n">ContextCompat</span><span class="o">.</span><span class="na">getDrawable</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">resId</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onDraw</span><span class="o">(</span><span class="n">Canvas</span> <span class="n">c</span><span class="o">,</span> <span class="n">RecyclerView</span> <span class="n">parent</span><span class="o">,</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">State</span> <span class="n">state</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c1">// 1. Get the parent (RecyclerView) padding</span>
+        <span class="kt">int</span> <span class="n">left</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="na">getPaddingLeft</span><span class="o">();</span>
+        <span class="kt">int</span> <span class="n">right</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="na">getWidth</span><span class="o">()</span> <span class="o">-</span> <span class="n">parent</span><span class="o">.</span><span class="na">getPaddingRight</span><span class="o">();</span>
+
+        <span class="c1">// 2. Iterate items of the RecyclerView</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">childIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">childIdx</span> <span class="o">&lt;</span> <span class="n">parent</span><span class="o">.</span><span class="na">getChildCount</span><span class="o">();</span> <span class="n">childIdx</span><span class="o">++)</span> <span class="o">{</span>
+
+            <span class="c1">// 3. Get the item</span>
+            <span class="n">View</span> <span class="n">item</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="na">getChildAt</span><span class="o">(</span><span class="n">childIdx</span><span class="o">);</span>
+
+            <span class="c1">// 4. Determine the item&#39;s top and bottom with the divider</span>
+            <span class="n">RecyclerView</span><span class="o">.</span><span class="na">LayoutParams</span> <span class="n">params</span> <span class="o">=</span> <span class="o">(</span><span class="n">RecyclerView</span><span class="o">.</span><span class="na">LayoutParams</span><span class="o">)</span> <span class="n">item</span><span class="o">.</span><span class="na">getLayoutParams</span><span class="o">();</span>
+            <span class="kt">int</span> <span class="n">top</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="na">getBottom</span><span class="o">()</span> <span class="o">+</span> <span class="n">params</span><span class="o">.</span><span class="na">bottomMargin</span><span class="o">;</span>
+            <span class="kt">int</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">top</span> <span class="o">+</span> <span class="n">divider</span><span class="o">.</span><span class="na">getIntrinsicHeight</span><span class="o">();</span>
+
+            <span class="c1">// 5. Set the divider&#39;s bounds</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">divider</span><span class="o">.</span><span class="na">setBounds</span><span class="o">(</span><span class="n">left</span><span class="o">,</span> <span class="n">top</span><span class="o">,</span> <span class="n">right</span><span class="o">,</span> <span class="n">bottom</span><span class="o">);</span>
+
+            <span class="c1">// 6. Draw the divider</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">divider</span><span class="o">.</span><span class="na">draw</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></div>
+
+<p>So that’s it, we’ve create two item decorators for our RecyclerView. Now it’s time to add them onto our RecyclerView so that we get the desired effect. Let’s look back to our Activity code. First we create an instance of RecyclerView.LayoutManager and instantiate it as a <code>LinearLayoutManager</code>. This gives us that same vertical <code>ListView</code> like look and feel.</p>
+
+<p>Next we define a spacing for how far apart we want our list items to appear. In our case 20. We pass that into the VerticalSpaceItemDecorator constructor we created earlier. Then lastly we’ll create an instance of a ShadowVerticalSpaceItemDecorator passing in the activity as the context and the resource of the drop_shadow drawable. To wrap everything up we’ll (7) set the layoutManager of the RecyclerView and (8) add the item decorators to the RecyclerView. Here we make two calls to the <code>addItemDecoration</code> method on the RecyclerView instance. First we add the shadow and then the vertical spacing decoration.</p>
+
+<div class="highlight"><pre><code class="java"><span class="c1">// 4. Initialize ItemAnimator, LayoutManager and ItemDecorators</span>
+<span class="n">RecyclerView</span><span class="o">.</span><span class="na">LayoutManager</span> <span class="n">layoutManager</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinearLayoutManager</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
+<span class="kt">int</span> <span class="n">verticalSpacing</span> <span class="o">=</span> <span class="mi">20</span><span class="o">;</span>
+<span class="n">VerticalSpaceItemDecorator</span> <span class="n">itemDecorator</span> <span class="o">=</span>
+  <span class="k">new</span> <span class="nf">VerticalSpaceItemDecorator</span><span class="o">(</span><span class="n">verticalSpacing</span><span class="o">);</span>
+<span class="n">ShadowVerticalSpaceItemDecorator</span> <span class="n">shadowItemDecorator</span> <span class="o">=</span>
+  <span class="k">new</span> <span class="nf">ShadowVerticalSpaceItemDecorator</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">drawable</span><span class="o">.</span><span class="na">drop_shadow</span><span class="o">);</span>
+
+<span class="o">...</span>
+
+<span class="c1">// 7. Set the LayoutManager</span>
+<span class="n">listingsView</span><span class="o">.</span><span class="na">setLayoutManager</span><span class="o">(</span><span class="n">layoutManager</span><span class="o">);</span>
+
+<span class="c1">// 8. Set the ItemDecorators</span>
+<span class="n">listingsView</span><span class="o">.</span><span class="na">addItemDecoration</span><span class="o">(</span><span class="n">shadowItemDecorator</span><span class="o">);</span>
+<span class="n">listingsView</span><span class="o">.</span><span class="na">addItemDecoration</span><span class="o">(</span><span class="n">itemDecorator</span><span class="o">);</span></code></pre></div>
+
+<p>If we go ahead and compile and run we should see the following:</p>
+
+<p><img src="/blog/images/favebakes-recyclerview.gif" alt="FaveBakes RecyclerView" class="img-responsive center-block" /></p>
+
+<h2 id="tldr"><strong>TL;DR</strong></h2>
+<p>We reviewed an existing app that leveraged ListView to display data. We added the ability to use RecyclerView by updating and syncing our gradle file. Then we covered the RecyclerView and it’s most important components such as:
+  * RecyclerView.ViewHolder to handle the item’s content/user interaction and where in the RecyclerView it belongs.
+  * RecyclerView.Adapter to provide binding between the items and the underlying data.
+  * RecyclerView.LayoutManager to set how the items are laid out.
+  * RecyclerView.ItemAnimator to define animations of items.
+  * RecyclerView.ItemDecorator to decorate the items.</p>
+
+<p>Then we went and finished our migration to RecyclerView by implementing the components listed above and changing our activity layout to swap out ListView for RecyclerView.</p>
+
+<p>I hope this helps you updating your project to RecyclerView.</p>
+
+	</article>
+  
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+		<!-- Traversoft Blog -->
+		<ins class="adsbygoogle"
+		     style="display:block"
+		     data-ad-client="ca-pub-4406878197705956"
+		     data-ad-slot="1304820626"
+		     data-ad-format="auto"></ins>
+		<script>
+		(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+
+	<div id="disqus_thread"></div>
+		<script>
+		var disqus_config = function () {
+			this.page.url = "//traversoft.com/blog//2016/01/31/replace-listview-with-recyclerview/"; // Replace PAGE_URL with your page's canonical URL variable
+			this.page.identifier = "/2016/01/31/replace-listview-with-recyclerview"; 
+		};
+		
+		(function() { // DON'T EDIT BELOW THIS LINE
+		var d = document, s = d.createElement('script');
+		
+		s.src = '//traversoft.disqus.com/embed.js';
+		
+		s.setAttribute('data-timestamp', +new Date());
+		(d.head || d.body).appendChild(s);
+		})();
+		</script>
+		<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+	</div>
+	      </div>
+      </div>
+    </div>
+
+    <footer>
+
+  <div class="container">
+
+<!--     <h2 class="footer-heading">traversoft</h2> -->
+
+    <div class="footer-col-12 column">
+      <ul>
+<!--         <a href="mailto:info@traversoft.com">info@traversoft.com</a> -->
+        <div class="col-sm-6 col-xs-12">	
+			<div class="row-fluid"> 
+				<div class="col-sm-offset-1 col-sm-1 col-xs-offset-2 col-xs-2">
+					<a href="http://www.linkedin.com/in/michaelrtraverso/" target="_blank" class="linkedin">
+					    <h5>
+					        <i class="fa fa-linkedin-square" style="font-size: 45px"></i>
+					    </h5>
+					</a>
+				</div>
+				<div class="col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-2">
+					<a href="https://www.facebook.com/traversoft" target="_blank" class="facebook-like">
+		                <h5>
+		                    <i class="fa fa-facebook-square" style="font-size: 45px"></i>
+		                </h5>
+		            </a>
+				</div>
+				<div class="col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-2">
+				    <a href="https://twitter.com/traversoft" target="_blank" class="twitter">
+				        <h5>
+				            <i class="fa fa-twitter-square" style="font-size: 45px"></i>
+				        </h5>
+				    </a>
+				</div>
+				<div class="col-sm-offset-1 col-sm-1 col-xs-offset-2 col-xs-2">
+				    <a id="github-link" href="https://github.com/miketraverso" class="github">
+				        <h5>
+				            <i class="fa fa-github" style="font-size: 45px"></i>
+				        </h5>
+				    </a>
+				</div>
+				<div class="col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-2">
+				    
+				    <a href="http://appstore.com/traversoft" target="_blank" class="apple">
+				        <h5>
+				            <i class="fa fa-apple" style="font-size: 45px"></i>
+				        </h5>
+				    </a>
+				</div>
+				<div class="col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-2">
+				    
+				    <a href="#contactus-subsection" class="google">
+				        <h5>
+				            <i class="fa fa-android" style="font-size: 45px"></i>
+				        </h5>
+				    </a>
+				</div>
+			</div>	
+			<div class="row-fluid">
+				<div class="col-sm-12 col-xs-12">
+					<div class="panel-body center lead">Follow <b>Traversoft</b> on social media, check out our apps or <a href="mailto:info@traversoft.com">e-mail</a> us today to discuss your next mobile project</div>
+				</div>
+			</div>    
+		</div>
+		
+        <div class="col-sm-6 col-xs-12">	
+			<div class="row-fluid"> 
+				<p class="legalese text-left">Copyright &copy;  Software 2016</p>
+				<p class="legalese text-left">Font Awesome by Dave Gandy - http://fontawesome.io</p>
+				<p class="legalese text-left">All brand icons are trademarks of their respective owners.</p>
+				<p class="legalese text-left">The use of trademarked images does not indicate endorsement of trademark owner by Traversoft.</p>
+			</div>
+        </div>
+      </ul>
+    </div>
+
+  </div>
+</footer>
+
+<!--
+<footer class="site-footer">
+
+  <div class="wrap">
+
+    <h2 class="footer-heading">traversoft</h2>
+
+    <div class="footer-col-1 column">
+      <ul>
+        <li>traversoft</li>
+        <li><a href="mailto:info@traversoft.com">info@traversoft.com</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+      <ul>
+        <li>
+          <a href="https://github.com/">
+            <span class="icon github">
+              <svg version="1.1" class="github-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#C2C2C2" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761
+                c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32
+                c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472
+                c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037
+                C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65
+                c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261
+                c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082
+                c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129
+                c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+              </svg>
+            </span>
+            <span class="username"></span>
+          </a>
+        </li>
+        <li>
+          <a href="https://twitter.com/">
+            <span class="icon twitter">
+              <svg version="1.1" class="twitter-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill="#C2C2C2" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27
+                c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767
+                c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206
+                C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271
+                c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469
+                c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/>
+              </svg>
+            </span>
+            <span class="username"></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-3 column">
+      <p class="text">We handle iOS and Android development projects of all sorts. We can also help you implement an HTML5/CSS webapp with either a C# or Java backend. Whatever your mobile app needs are we've got the skills to make it happen.</p>
+    </div>
+
+  </div>
+
+</footer>
+-->
+
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script src="//oss.maxcdn.com/rrssb/1.6.0/js/rrssb.min.js"></script>
+	<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-71645176-1', 'auto');ga('send', 'pageview');
+	</script>
+    </body>
+</html>

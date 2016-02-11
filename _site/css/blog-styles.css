@@ -1,4 +1,4 @@
-@import url("http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css");
+@import url("//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css");
 
 html, body {
   height: 100%;
@@ -31,15 +31,24 @@ iframe {
 .post-link {
 	font-family: "Verdana";
 	font face="verdana";
-    letter-spacing: 0em;
-    color: #31849b;
+  letter-spacing: 0em;
+  color: #31849b;
+}
+
+.post-content {
+  font-family: 'Droid Serif', serif;
+}
+
+.post-content > h2 {
+  font-family: 'Droid Serif', serif;
+  font-weight: bold;
 }
 
 .custom-tag,
 body > div > div > div > div > header > span > a,
 body > div > div > div > div > header > span > a:hover,
 body > div > div > div > div > header > span > a:visited {
-	
+
 	background-color: #31849b;
 	color: white;
 }
@@ -56,7 +65,7 @@ body > div > div > div > div > header > span > a:visited {
 }
 
 .panel-body.center {
-	text-align: center;	
+	text-align: center;
 }
 
 #logo-text > a {
@@ -74,7 +83,7 @@ body > div > div > div > div > header > span > a:visited {
     font-size: 14px;
 }
 
-hr { 
+hr {
     display: block;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
@@ -182,79 +191,79 @@ footer .glyphicon:hover {
 	font-size: 19px;
 	text-align: center;
 	top: 7px;
-	outline: none; 
+	outline: none;
 }
 
 .fa {
 	font-size: 90px;
 	text-align: center;
 	top: 7px;
-	outline: none; 
+	outline: none;
 }
 
 a.facebook-like i,
-.facebook-like h3.list-group-item-heading { 
-	color:#3b5998; 
+.facebook-like h3.list-group-item-heading {
+	color:#3b5998;
 }
-a.facebook-like:hover { 
-	background-color:#3b5998; 
+a.facebook-like:hover {
+	background-color:#3b5998;
 }
 
 a.google-plus i,
-.google-plus h3.list-group-item-heading { 
-	color:#dd4b39; 
+.google-plus h3.list-group-item-heading {
+	color:#dd4b39;
 }
-a.google-plus:hover { 
-	background-color:#dd4b39; 
+a.google-plus:hover {
+	background-color:#dd4b39;
 }
 
 a.twitter i,
-.twitter h3.list-group-item-heading { 
-	color:#00acee; 
+.twitter h3.list-group-item-heading {
+	color:#00acee;
 }
-a.twitter:hover { 
-	background-color:#00acee; 
+a.twitter:hover {
+	background-color:#00acee;
 }
 
 a.linkedin i,
-.linkedin h3.list-group-item-heading { 
-	color:#0e76a8; 
+.linkedin h3.list-group-item-heading {
+	color:#0e76a8;
 }
-a.linkedin:hover { 
-	background-color:#0e76a8; 
+a.linkedin:hover {
+	background-color:#0e76a8;
 }
 
 a.google i,
-.google h3.list-group-item-heading { 
-	color:#A4C739; 
+.google h3.list-group-item-heading {
+	color:#A4C739;
 }
-a.google:hover { 
-	background-color:#A4C739; 
+a.google:hover {
+	background-color:#A4C739;
 }
 
 a.apple i,
-.apple h3.list-group-item-heading { 
-	color:#000000; 
+.apple h3.list-group-item-heading {
+	color:#000000;
 }
-a.apple:hover { 
-	background-color:#000000; 
+a.apple:hover {
+	background-color:#000000;
 }
 
 a.github i,
-.github h3.list-group-item-heading { 
-	color:#000000; 
+.github h3.list-group-item-heading {
+	color:#000000;
 }
-a.github:hover { 
-	background-color:#000000; 
+a.github:hover {
+	background-color:#000000;
 }
 
 a.mail i,
-.mail h3.list-group-item-heading { 
+.mail h3.list-group-item-heading {
 	color: orange;
 }
-a.mail:hover { 
+a.mail:hover {
 }
-#mail-link { 
+#mail-link {
 color: white;
 }
 
@@ -266,8 +275,8 @@ a.linkedin:hover,
 a.mail:hover,
 a.apple:hover,
 a.android:hover
-{ 
-	color:#FFF; 
+{
+	color:#FFF;
 }
 
 
@@ -287,6 +296,6 @@ a.android:hover
 		font-size: 60px;
 		text-align: center;
 		top: 7px;
-		outline: none; 
+		outline: none;
 	}
 }

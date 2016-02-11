@@ -1,37 +1,39 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://traversoft.com/blog/2015/07/15/determine-nearby-locations/</loc>
-        <lastmod>2015-12-26T15:33:00-05:00</lastmod>
+        <loc>//traversoft.com/blog//2015/07/15/determine-nearby-locations/</loc>
+        <lastmod>2016-01-12T21:36:32-05:00</lastmod>
     </url>
     <url>
-        <loc>http://traversoft.com/blog/2015/08/05/hide-empty-cells/</loc>
-        <lastmod>2015-12-26T15:33:00-05:00</lastmod>
+        <loc>//traversoft.com/blog//2015/08/05/hide-empty-cells/</loc>
+        <lastmod>2016-01-12T21:36:32-05:00</lastmod>
     </url>
     <url>
-        <loc>
-            http://traversoft.com/blog/2015/08/06/having-trouble-with-fabric-android-studio/
-        </loc>
-        <lastmod>2015-12-26T15:33:00-05:00</lastmod>
+        <loc>//traversoft.com/blog//2015/08/06/having-trouble-with-fabric-android-studio/</loc>
+        <lastmod>2016-02-11T09:42:10-05:00</lastmod>
     </url>
     <url>
-        <loc>http://traversoft.com/blog/2015/09/01/android-custom-ui-components/</loc>
-        <lastmod>2015-12-26T15:33:00-05:00</lastmod>
+        <loc>//traversoft.com/blog//2015/09/01/android-custom-ui-components/</loc>
+        <lastmod>2016-01-12T21:36:32-05:00</lastmod>
     </url>
     <url>
-        <loc>http://traversoft.com/blog/2015/09/15/xcode-debugging-images%20copy/</loc>
-        <lastmod>2015-12-26T15:33:00-05:00</lastmod>
+        <loc>//traversoft.com/blog//2015/09/15/xcode-debugging-images/</loc>
+        <lastmod>2016-01-12T21:36:32-05:00</lastmod>
     </url>
     <url>
-        <loc>http://traversoft.com/blog/2015/10/01/objc-animate-autolayout/</loc>
-        <lastmod>2016-01-09T12:33:52-05:00</lastmod>
+        <loc>//traversoft.com/blog//2015/10/01/objc-animate-autolayout/</loc>
+        <lastmod>2016-02-11T09:38:32-05:00</lastmod>
     </url>
     <url>
-        <loc>http://traversoft.com/blog/about/</loc>
-        <lastmod>2015-12-22T09:57:17-05:00</lastmod>
+        <loc>//traversoft.com/blog//2016/01/31/replace-listview-with-recyclerview/</loc>
+        <lastmod>2016-02-11T09:42:23-05:00</lastmod>
     </url>
     <url>
-        <loc>http://traversoft.com/blog/</loc>
-        <lastmod>2016-01-09T12:33:52-05:00</lastmod>
+        <loc>//traversoft.com/blog//about/</loc>
+        <lastmod>2016-01-12T21:36:32-05:00</lastmod>
+    </url>
+    <url>
+        <loc>//traversoft.com/blog//</loc>
+        <lastmod>2016-02-11T09:42:23-05:00</lastmod>
     </url>
 </urlset>

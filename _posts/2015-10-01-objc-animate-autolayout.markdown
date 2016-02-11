@@ -4,7 +4,7 @@ title:  "Animation with Autolayout"
 date:   2015-10-01 16:33:33
 description: Animating your UIView with Autolayout. How to animate ios9 uiviews using autolayout with objective-c and xcode. How to setup constraints using interface builder.
 tags: ios programming development UI UX autolayout animation
-thumbnail: /images/AutolayoutAnim-03-ConstraintSetup.png
+thumbnail: /blog/images/AutolayoutAnim-03-ConstraintSetup.png
 ---
 
 Lots of apps take advantage of autolayout, and if your app isn't currently you really should check out implementing it. Autolayout is a great tool for getting all your UIView components to be in the right place and be the right size. Animation is just the movement of objects. Sort of seems like we have two diametrically opposing concepts here; autolayout to get things in the right place with the right size and animation to move those same things around. They're not though and here's why: autolayout ensures the correct position of the UIViews before and after any animation (i.e. scaling, translation, etc.). 
