@@ -4,7 +4,7 @@ title:  "Replacing ListView with RecyclerView"
 date:   2016-01-31 16:33:33
 description: How to replace ListView with RecyclerView in Android. Android RecyclerView tutorial. Android tutorial for RecyclerView. Android UI and replacing ListView with RecyclerView.
 tags: android programming development UI UX materialdesign animation
-thumbnail: /images/favebakes-recyclerview.gif
+thumbnail: /images/favebakes-thumbnail.png
 ---
 
 So if you’ve ever written an Android app, chances are that you’ve used a ListView. If you’re new to Android development, ListView is a common view that allows you to display in a table like view. Here’s a sample of what a ListView looks like running on an Android device. These views are similar in that they allow developers to display a collection of items in a table, or list, that can be scrolled through. It’s a very common UI component.
