@@ -10,7 +10,7 @@
         <title>Replacing ListView with RecyclerView</title>
         <description>&lt;p&gt;So if you’ve ever written an Android app, chances are that you’ve used a ListView. If you’re new to Android development, ListView is a common view that allows you to display in a table like view. Here’s a sample of what a ListView looks like running on an Android device. These views are similar in that they allow developers to display a collection of items in a table, or list, that can be scrolled through. It’s a very common UI component.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/blog/images/favebakes-intro.png&quot; alt=&quot;Initial UI Layout&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/favebakes-intro.png&quot; alt=&quot;Initial UI Layout&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;an-introduction-to-fave-bakes&quot;&gt;&lt;strong&gt;An introduction to Fave Bakes&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;Our existing app displays a list of favorite bakeries in the area. The bakery name, phone number, address, website and logo appear to the user and allow them to peruse a number of local bakeries.  So let’s take a look at our &lt;code&gt;Bakery&lt;/code&gt; model.&lt;/p&gt;
@@ -67,7 +67,7 @@
 
 &lt;p&gt;In &lt;strong&gt;FaveBakes&lt;/strong&gt; we’re dealing with a very simple activity that just has a &lt;code&gt;ListView&lt;/code&gt; that takes up the screen, sets the background color and adds a padding to the top and bottom, left and right. Our list item view for each item of the &lt;code&gt;ListView&lt;/code&gt; is a bit more complicated. It displays the bakery image to the left of the bakery name, address, phone number, website and underneath all of that is a description of the bakery. Here’s what our &lt;strong&gt;list_item_bakery.xml&lt;/strong&gt; looks like and the layout xml that creates it.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/blog/images/bakery_item.png&quot; alt=&quot;Sample Bakery Item Layout&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/bakery_item.png&quot; alt=&quot;Sample Bakery Item Layout&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;xml&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;LinearLayout&lt;/span&gt;
@@ -269,7 +269,7 @@
 
 &lt;p&gt;So that’s basically it. Here’s a GIF showing what the app looks like once launched. For a complete listing of this project go ahead and check out &lt;strong&gt;TODO&lt;/strong&gt; on GitHub.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/blog/images/favebakes-listview.gif&quot; alt=&quot;FaveBakes ListView&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/favebakes-listview.gif&quot; alt=&quot;FaveBakes ListView&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;updating-to-recyclerview&quot;&gt;&lt;strong&gt;Updating to RecyclerView&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;We’ve just reviewed how ListView is used in Android. So now let’s do away with the old and bring in the new… bring on the RecyclerView!&lt;/p&gt;
@@ -321,11 +321,11 @@
 &lt;p&gt;So that’s a quick overview of the &lt;code&gt;RecyclerView&lt;/code&gt; and it’s components. Now we’re going to go replace the ListView with a &lt;code&gt;RecyclerView&lt;/code&gt; leveraging the components we just briefly talked about. Before we can begin though we need to tell our project where to pickup the API to use the RecyclerView. We’ll need to add the following: &lt;code&gt;compile &#39;com.android.support:recyclerview-v7:+&#39;&lt;/code&gt; under the &lt;code&gt;dependencies&lt;/code&gt; section.
 If you need help doing this, in Android Studio find the &lt;strong&gt;build.gradle&lt;/strong&gt; file in your &lt;strong&gt;Project&lt;/strong&gt; view that is under your &lt;strong&gt;app&lt;/strong&gt; folder. If you need help figuring which build.gradle this is here’s a screenshot to help you out.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/blog/images/favebakes-update-gradle.png&quot; alt=&quot;Update the Gradle&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/favebakes-update-gradle.png&quot; alt=&quot;Update the Gradle&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Once you update the gradle file you’ll need to sync your project with your updated gradle file. This is done by tapping on the button shown below. Android Studio will go out and download the necessary library to your project so that you’ll be able to start using it.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/blog/images/favebakes-update-gradle-btn.png&quot; alt=&quot;Update the Gradle&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/favebakes-update-gradle-btn.png&quot; alt=&quot;Update the Gradle&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Since our model is going to stay the same, let’s start with our activity layout file. Our parent layout, RelativeLayout stays exactly the same. We just swap out the ListView for android.support.v7.widget.RecyclerView.&lt;/p&gt;
 
@@ -591,7 +591,7 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 
 &lt;p&gt;If we go ahead and compile and run we should see the following:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/blog/images/favebakes-recyclerview.gif&quot; alt=&quot;FaveBakes RecyclerView&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/favebakes-recyclerview.gif&quot; alt=&quot;FaveBakes RecyclerView&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;tldr&quot;&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;We reviewed an existing app that leveraged ListView to display data. We added the ability to use RecyclerView by updating and syncing our gradle file. Then we covered the RecyclerView and it’s most important components such as:
@@ -944,7 +944,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 
 &lt;p&gt;Today though I came across a bit of a problem getting Fabric and the Crashlytics API properly installed in my version of Android Studio. A bit of background on my situation. I’ve got an Android only, libgdx based, project running with the latest stable Android Studio (v1.3.0.10). LibGDX allows you to create projects that run cross platform. Web, iOS, Android, Windows, Mac… heck even Blackberry. One of the nasty results of this is that there are multiple projects with multiple &lt;code&gt;build.gradle&lt;/code&gt; files. Which probably led to my issue :&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/blog/images/gradle-error.png&quot; alt=&quot;Android Studio with Gradle build error&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/gradle-error.png&quot; alt=&quot;Android Studio with Gradle build error&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Basically my AndroidLauncher.java, which is my app’s entry point, where I am calling the Fabric setup methods, complained that it couldn’t find teh Crashlyitcs and Fabric packages. Ruh-roh right? &lt;/p&gt;
 
