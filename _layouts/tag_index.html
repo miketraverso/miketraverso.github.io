@@ -23,7 +23,7 @@ layout: default
 							<div class="col-lg-9 col-md-8 col-sm-12 col-xs-12">
 							    <div class="row">
 							        <span class="post-date"><i class="fa fa-small fa-clock-o"></i> {{ post.date | date: "%-d %b %Y" }}</span>
-									<a class="post-link" href="{{ post.url | prepend: site.url }}">{{ post.title }}</a>
+									<a class="post-link" href="http:{{ post.url | prepend: site.url }}">{{ post.title }}</a>
 									    {% include social.html %}
 			
 									<p>{{ post.content | strip_html | truncatewords: 100 }} 
