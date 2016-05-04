@@ -4,12 +4,14 @@ title:  "Replacing ListView with RecyclerView"
 date:   2016-01-31 16:33:33
 description: How to replace ListView with RecyclerView in Android. Android RecyclerView tutorial. Android tutorial for RecyclerView. Android UI and replacing ListView with RecyclerView.
 tags: android programming development UI UX materialdesign animation
-thumbnail: /images/favebakes-thumbnail.png
+thumbnail: /blog/images/favebakes-thumbnail.png
 ---
 
-So if you’ve ever written an Android app, chances are that you’ve used a ListView. If you’re new to Android development, ListView is a common view that allows you to display in a table like view. Here’s a sample of what a ListView looks like running on an Android device. These views are similar in that they allow developers to display a collection of items in a table, or list, that can be scrolled through. It’s a very common UI component.
+So if you’ve ever written an Android app, chances are that you’ve used a ListView. If you’re new to Android development, ListView is a common view that allows you to display in a table like view. Here’s a sample of what a ListView looks like running on an Android device, next to what a RecyclerView with the same data and same item layout. Both ListView and RecyclerView are similar in that they allow developers to display a collection of items in a table, or list, that can be scrolled through. It’s a very common UI component.
 
-![Initial UI Layout]({{ site.baseurl }}/images/favebakes-intro.png){: .img-responsive .center-block }
+In this post we are going to look at an existing app that uses a ListView. Then we're going to step by step replace the ListView with a RecyclerView. Let's start looking at our existing app: Fave Bakes!
+
+![Initial UI Layout]({{ site.baseurl }}/blog/images/favebakes-intro.png){: .img-responsive .center-block }
 
 ## **An introduction to Fave Bakes**
 Our existing app displays a list of favorite bakeries in the area. The bakery name, phone number, address, website and logo appear to the user and allow them to peruse a number of local bakeries.  So let's take a look at our `Bakery` model.
@@ -70,7 +72,7 @@ While not a true POJO we just wanted something simple for our scenario. We load 
 
 In **FaveBakes** we're dealing with a very simple activity that just has a `ListView` that takes up the screen, sets the background color and adds a padding to the top and bottom, left and right. Our list item view for each item of the `ListView` is a bit more complicated. It displays the bakery image to the left of the bakery name, address, phone number, website and underneath all of that is a description of the bakery. Here's what our **list_item_bakery.xml** looks like and the layout xml that creates it.
 
-![Sample Bakery Item Layout]({{ site.baseurl }}/images/bakery_item.png){: .img-responsive .center-block }
+![Sample Bakery Item Layout]({{ site.baseurl }}/blog/images/bakery_item.png){: .img-responsive .center-block }
 
 {% highlight xml %}
 <?xml version="1.0" encoding="utf-8"?>
@@ -241,29 +243,22 @@ public class BakeryListingsActivity extends AppCompatActivity {
         listingsView.setAdapter(adapter);
 
         // 5. Handle the click
-        listingsView.setOnClickListener(new View.OnClickListener() {
+        listingsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onClick(View v) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                View parentRow = (View) v.getParent();
-                if (parentRow != null) {
+                ListView listView = (ListView) view.getParent();
+                if (listView != null) {
 
-                    ListView listView = (ListView) parentRow.getParent();
-                    if (listView != null) {
+                    Bakery bakery = bakeries.get(position);
+                    if (bakery != null) {
 
-                        int position = listView.getPositionForView(parentRow);
-
-                        Bakery bakery = bakeries.get(position);
-                        if (bakery != null) {
-
-                            Toast.makeText(context, "Clicked on " + bakery.bakeryName, Toast.LENGTH_SHORT).show();
-                        }
+                        Toast.makeText(context, "Clicked on " + bakery.bakeryName, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
-
     }
 
     // Loads bakery data into List<Bakery>
@@ -274,9 +269,9 @@ public class BakeryListingsActivity extends AppCompatActivity {
 }
 {% endhighlight %}
 
-So that's basically it. Here's a GIF showing what the app looks like once launched. For a complete listing of this project go ahead and check out **TODO** on GitHub.
+So that's basically it. Here's a GIF showing what the app looks like once launched. For a complete listing of this project go ahead and check out [the master and feature branch](https://github.com/miketraverso/ListViewToRecyclerView) on GitHub.
 
-![FaveBakes ListView]({{ site.baseurl }}/images/favebakes-listview.gif){: .img-responsive .center-block }
+![FaveBakes ListView]({{ site.baseurl }}/blog/images/favebakes-listview.gif){: .img-responsive .center-block }
 
 ## **Updating to RecyclerView**
 We've just reviewed how ListView is used in Android. So now let's do away with the old and bring in the new... bring on the RecyclerView!
@@ -324,11 +319,11 @@ ItemAnimator's responsibility is to ... animate the items. :) When items are add
 So that's a quick overview of the `RecyclerView` and it's components. Now we're going to go replace the ListView with a `RecyclerView` leveraging the components we just briefly talked about. Before we can begin though we need to tell our project where to pickup the API to use the RecyclerView. We'll need to add the following: `compile 'com.android.support:recyclerview-v7:+'` under the `dependencies` section.
 If you need help doing this, in Android Studio find the **build.gradle** file in your **Project** view that is under your **app** folder. If you need help figuring which build.gradle this is here's a screenshot to help you out.
 
-![Update the Gradle]({{ site.baseurl }}/images/favebakes-update-gradle.png){: .img-responsive .center-block }
+![Update the Gradle]({{ site.baseurl }}/blog/images/favebakes-update-gradle.png){: .img-responsive .center-block }
 
 Once you update the gradle file you'll need to sync your project with your updated gradle file. This is done by tapping on the button shown below. Android Studio will go out and download the necessary library to your project so that you'll be able to start using it.
 
-![Update the Gradle]({{ site.baseurl }}/images/favebakes-update-gradle-btn.png){: .img-responsive .center-block }
+![Update the Gradle]({{ site.baseurl }}/blog/images/favebakes-update-gradle-btn.png){: .img-responsive .center-block }
 
  Since our model is going to stay the same, let's start with our activity layout file. Our parent layout, RelativeLayout stays exactly the same. We just swap out the ListView for android.support.v7.widget.RecyclerView.
 
@@ -610,16 +605,17 @@ listingsView.addItemDecoration(itemDecorator);
 
 If we go ahead and compile and run we should see the following:
 
-![FaveBakes RecyclerView]({{ site.baseurl }}/images/favebakes-recyclerview.gif){: .img-responsive .center-block }
+![FaveBakes RecyclerView]({{ site.baseurl }}/blog/images/favebakes-recyclerview.gif){: .img-responsive .center-block }
 
 ## **TL;DR**
 We reviewed an existing app that leveraged ListView to display data. We added the ability to use RecyclerView by updating and syncing our gradle file. Then we covered the RecyclerView and it's most important components such as:
+
   * RecyclerView.ViewHolder to handle the item’s content/user interaction and where in the RecyclerView it belongs.
   * RecyclerView.Adapter to provide binding between the items and the underlying data.
   * RecyclerView.LayoutManager to set how the items are laid out.
   * RecyclerView.ItemAnimator to define animations of items.
   * RecyclerView.ItemDecorator to decorate the items.
 
-Then we went and finished our migration to RecyclerView by implementing the components listed above and changing our activity layout to swap out ListView for RecyclerView.
+Then we went and finished our migration to RecyclerView by implementing the components listed above and changing our activity layout to swap out ListView for RecyclerView. The project is located on [GitHub](https://github.com/miketraverso/ListViewToRecyclerView/). To look at the whole project using the list view you can find it [here](https://github.com/miketraverso/ListViewToRecyclerView/). Or if you're looking for the update it's on the feature/replace-list-view branch located [here](https://github.com/miketraverso/ListViewToRecyclerView/tree/feature/replace-list-view).
 
 I hope this helps you updating your project to RecyclerView.
