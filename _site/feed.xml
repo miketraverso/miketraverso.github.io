@@ -3,19 +3,243 @@
   <channel>
     <title>traversoft</title>
     <description>We handle iOS and Android development projects of all sorts. We can also help you implement an HTML5/CSS webapp with either a C# or Java backend. Whatever your mobile app needs are we&#39;ve got the skills to make it happen.</description>
-    <link>//miketraverso.github.io/</link>
-    <atom:link href="//miketraverso.github.io/feed.xml" rel="self" type="application/rss+xml" />
+    <link>//traversoft.com/blog/</link>
+    <atom:link href="//traversoft.com/blog/feed.xml" rel="self" type="application/rss+xml" />
+    
+      <item>
+        <title>Simplifying your Android code with Butter Knife</title>
+        <description>&lt;p&gt;So if you’re an Android developer than you’ve used &lt;code&gt;findViewById&lt;/code&gt;. As an Android developer you’ve undoubtedly seen, and called, that method many times. It helps you access views contained in the layout files of your Activities or Fragments.&lt;/p&gt;
+
+&lt;p&gt;Many of your apps have their &lt;code&gt;onCreate&lt;/code&gt; or &lt;code&gt;init&lt;/code&gt; methods littered with this method call to obtain reference to all your views that need to interact with your code. Special logic to hide or show a button?… you’ll need findViewById. Certain criteria to change to color of a TextView? … you’ll need findViewById.&lt;/p&gt;
+
+&lt;p&gt;What if there was a better way? Jake Wharton, an engineer at &lt;a href=&quot;http://www.square.com&quot;&gt;Square&lt;/a&gt;, has built such a way. Butter Knife has it’s roots in libraries like &lt;a href=&quot;https://github.com/google/guice/wiki/Motivation&quot;&gt;Guice&lt;/a&gt; &amp;amp; &lt;a href=&quot;http://square.github.io/dagger/&quot;&gt;Dagger&lt;/a&gt;. These are dependency injection (DI) libraries. &lt;strong&gt;Butter Knife&lt;/strong&gt; follows in that it too is a dependency injection albeit less powerful than the others as it focuses on just handling field and method binding to layouts. To quote Jake Wharton’s &lt;a href=&quot;https://github.com/JakeWharton/butterknife&quot;&gt;Butter Knife GitHub&lt;/a&gt; page, “A butter knife is like a dagger only infinitely less sharp.”&lt;/p&gt;
+
+&lt;p&gt;Butter Knife was built to do the following:
+* Allow field and method binding
+* Connect views &amp;amp; resources easily &amp;amp; cleanly
+* Using annotations to generate boilerplate code&lt;/p&gt;
+
+&lt;h2 id=&quot;what-can-you-expect-from-butter-knife&quot;&gt;&lt;strong&gt;What can you expect from Butter Knife…&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Butter Knife lets you annotate your fields in your Java code so that you don’t need to link it to a view id from your layout. So one of the main benefits is no more findViewById calls. Similarly, you’re able to annotate methods in your Java code to handle clicks. That’s pretty rad considering before you had to either create a find and then an anonymous inner class to handle the click on that field OR have an onClick attribute on the field in your layout and hope you created the method with the same name.&lt;/p&gt;
+
+&lt;p&gt;Here’s where Butter Knife gets interesting. Say you’ve a bunch of fields in your layout that get hidden or unhidden depending on some logic? Butter Knife lets you operate on a group of views, via a list or array, with actions or setters so instead of a loop through the fields of a field group you’re able to easily act on all of the fields with a line of code.&lt;/p&gt;
+
+&lt;p&gt;Finally, Butter Knife helps eliminate resource lookups by using resource annotations on fields. So colors, strings, values, etc. can all be mapped to a field via an annotation. All of these features are what you can expect from the Butter Knife library to help you keep your codebase neat and tidy. So let’s get going with Butter Knife!&lt;/p&gt;
+
+&lt;h2 id=&quot;installation&quot;&gt;&lt;strong&gt;Installation…&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;First, we’ll update our Project &lt;strong&gt;build.gradle.&lt;/strong&gt; Be sure to include the &lt;code&gt;mavenCentral()&lt;/code&gt; repository.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/butterknife/install-butterknife-1.png&quot; alt=&quot;First step to installing butter knife is setting up your gradle repositories&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now we’ll move over to our Module &lt;strong&gt;build.gradle&lt;/strong&gt;. First we’ll apply the &lt;code&gt;com.neenbedankt.android-apt plugin&lt;/code&gt;. This plugin helps with annotation processing and serves two purposes: Allow compile time annotation processing and assisting in generating the boilerplate code.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/butterknife/install-butterknife-2.png&quot; alt=&quot;Apply plugins in your Android Studio project&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Next we’ll update our Project’s build.gradle to include the
+&lt;img src=&quot;/blog/images/butterknife/install-butterknife-3.png&quot; alt=&quot;Updating your dependencies to pull down the necessary libraries&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/butterknife/install-butterknife-4.png&quot; alt=&quot;Sync Gradle with Project&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;simplify-with-butter-knife&quot;&gt;&lt;strong&gt;Simplify with Butter Knife…&lt;/strong&gt;*&lt;/h2&gt;
+
+&lt;p&gt;Butter Knife leverages annotations. For those of you not used to annotations, they’re simply metadata on the fields, methods or classes they’re annotating. For example, if you’ve seen  &lt;code&gt;@Override&lt;/code&gt; or &lt;code&gt;@SuppressWarning&lt;/code&gt; you’ve seen annotations. With Butter Knife one of the more popular annotations that you’ll be using is &lt;code&gt;@BindView&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This tutorial we’ll be leveraging the &lt;strong&gt;FaveBakes&lt;/strong&gt; project. The starting point for which can be found on GitHub and can be &lt;a href=&quot;https://github.com/miketraverso/ListViewToRecyclerView/tree/feature/replace-list-view&quot;&gt;downloaded here&lt;/a&gt;. Here’s a snippet of code from our project. As you can see this code is pretty busy doing stuff that has to be done in order for you to get to the fun stuff. This is a lot of ugly and all we’re doing is getting fields set to their corresponding views from our layout.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/butterknife/before-butterknife.png&quot; alt=&quot;Before Butter Knife&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;With Butter Knife this:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listingsView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findViewById&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;listings_view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Toolbar&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;toolbar&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Toolbar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findViewById&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toolbar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;can become this:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;nd&quot;&gt;@BindView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;listings_view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listingsView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+   &lt;span class=&quot;nd&quot;&gt;@BindView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toolbar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Toolbar&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;toolbar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s much simpler. This sets up the plumbing. Now we just make a call in our &lt;strong&gt;BakeryListingsActivity&lt;/strong&gt;’s &lt;code&gt;onCreate&lt;/code&gt; method  to actually have the Butter Knife library bind all the fields and methods we’ve annotated to their corresponding views in the layout. So far pretty easy.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/butterknife/butterknife-bind.png&quot; alt=&quot;Bind with Butter Knife&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;viewholder--fragments&quot;&gt;&lt;strong&gt;ViewHolder &amp;amp; Fragments&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;What about ViewHolders and Fragments? Can Butter Knife handle them too? Yes. Yes it can. Earlier we took a look at an example of some ugly code. That was our BakeryHolder class, an extension of RecyclerView.ViewHolder. Below let’s see what that code looks like with Butter Knife. As you’ll notice, with the refactoring the constructor is much cleaner.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BakeryHolder&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ViewHolder&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;OnClickListener&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// 1. Define the bindings to the ViewHolder&amp;#39;s views&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@BindView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakery_logo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ImageView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeryLogo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@BindView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakery_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TextView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeryName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@BindView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakery_address&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TextView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@BindView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakery_description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TextView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@BindView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakery_phone&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TextView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;phone&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@BindView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakery_website&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TextView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;website&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bakery&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Context&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;BakeryHolder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Context&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;itemView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;itemView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;context&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;// 2. Bind Butter knife to this view holder&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ButterKnife&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;itemView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;itemView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setOnClickListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;bindBakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bakery&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakery&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakeryName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakeryName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;phone&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;phoneNumber&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;website&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;websiteUrl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakeryLogo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setImageBitmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;logo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here’s an example on how Butter Knife would be used with a &lt;code&gt;Fragment&lt;/code&gt;. Notice the class scope &lt;code&gt;Unbinder&lt;/code&gt; object. This is what calls to &lt;code&gt;ButterKnife.bind()&lt;/code&gt; returns and allows you to call &lt;code&gt;unbind&lt;/code&gt;. This is very useful for Fragments as &lt;code&gt;onDestroyView&lt;/code&gt; may be called but the instance of the fragment is still present. &lt;code&gt;unbind&lt;/code&gt; helps you keep things tidy. You can also call &lt;code&gt;unbind&lt;/code&gt; from an Activity’s &lt;code&gt;onDestroy()&lt;/code&gt; too if you wanna be super clean.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Unbinder&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unbinder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onCreateView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LayoutInflater&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inflater&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+                         &lt;span class=&quot;n&quot;&gt;ViewGroup&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;container&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+                         &lt;span class=&quot;n&quot;&gt;Bundle&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;view&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inflater&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;inflate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;fancy_fragment&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+                                 &lt;span class=&quot;n&quot;&gt;container&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+                                 &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;unbinder&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ButterKnife&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// TODO Use fields...&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;other-resources&quot;&gt;&lt;strong&gt;Other resources&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Butter Knife is not just for views. Pretty much any resource you have that you’d like to bind to an Activity or Fragment to avoid using &lt;code&gt;getResources()&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// Example bindings for resources&lt;/span&gt;
+&lt;span class=&quot;nd&quot;&gt;@BindBitmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mipmap&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nd&quot;&gt;@BindString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nd&quot;&gt;@BindArray&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nd&quot;&gt;@BindBool&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bool&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nd&quot;&gt;@BindColor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nd&quot;&gt;@BindDimen&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;dimen&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nd&quot;&gt;@BindDrawable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;drawable&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nd&quot;&gt;@BindInt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;integer&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Our FaveBakes project has some pretty messy code in our &lt;code&gt;loadBakeries&lt;/code&gt; method. In particular the section that has this snippet:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;Bitmap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alessiIcon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitmapFactory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;decodeResource&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getResources&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mipmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;alessi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Bitmap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;floridaIcon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitmapFactory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;decodeResource&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getResources&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mipmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;florida&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Bitmap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;housewifeIcon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BitmapFactory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;decodeResource&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getResources&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mipmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;piece&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Bitmap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mauricioIcon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitmapFactory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;decodeResource&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getResources&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mipmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mauricio&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Bitmap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pieIcon&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitmapFactory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;decodeResource&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getResources&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mipmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;pie&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;If we moved our declaration of all these bitmaps to be members of the class instead of local variables in the method, we can simplify this code and avoid explicitly calling &lt;code&gt;getResources()&lt;/code&gt; and using the &lt;code&gt;BitmapFactory&lt;/code&gt; class.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BakeryListingsActivity&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AppCompatActivity&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// 1. Bind views on the activity with the @BindView annotation&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@BindView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;listings_view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listingsView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@BindView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toolbar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Toolbar&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;toolbar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;nd&quot;&gt;@BindBitmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mipmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;alessi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bitmap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alessiIcon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@BindBitmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mipmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;florida&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bitmap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;floridaIcon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@BindBitmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mipmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;piece&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bitmap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;housewifeIcon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@BindBitmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mipmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mauricio&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bitmap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mauricioIcon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@BindBitmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;mipmap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;pie&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bitmap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pieIcon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeries&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Context&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Pretty neat huh? Nice not having to worry about getting a context to call getResources.&lt;/p&gt;
+
+&lt;h2 id=&quot;clicks&quot;&gt;&lt;strong&gt;Clicks&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;While we’ve focused a lot on fields Butter Knife also handles click handling. To show an example, we’re going to take the website link that appears in each item in the RecyclerView and make it clickable.&lt;/p&gt;
+
+&lt;p&gt;In BakeryHolder.java we are going to add a new method called &lt;code&gt;launchWebsite&lt;/code&gt; that takes in a parameter of a TextView which will represent the TextView that is clicked by the user. Have you noticed the big change in the snippet below? That’s right. The annotation above the method declaration. &lt;code&gt;@OnClick(R.id.bakery_website)&lt;/code&gt; binds the &lt;code&gt;launchWebsite(TextView url)&lt;/code&gt; method to the onClick event of the R.id.bakery_website view. Neat. No fussing around with layout files and no anonymous inner classes to handle the onClick.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// 3. Handle clicks on the bakery website&lt;/span&gt;
+&lt;span class=&quot;nd&quot;&gt;@OnClick&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakery_website&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;launchWebsite&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TextView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;websiteUrl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;URLUtil&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isValidUrl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;websiteUrl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;Intent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;browserIntent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Intent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Intent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ACTION_VIEW&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Uri&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;websiteUrl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;startActivity&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;browserIntent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that in the example above, we’re passing in the TextView so that we can read from the TextView that was clicked and grab the URL. That said, the method does NOT have to be provided and the @OnClick would still work. For example, if you pressed a view and wanted an activity to launch you may not need to know which view was pressed. In that scenario you can omit the parameter. The @OnClick annotation also works with a list of views where you may want to bind multiple views to the same method to handle all of those views onClick events. @OnItemSelected is also supported.&lt;/p&gt;
+
+&lt;h2 id=&quot;groups-of-views&quot;&gt;&lt;strong&gt;Groups of views&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Actions&lt;/strong&gt;
+With Actions we’re able to &lt;em&gt;act&lt;/em&gt; on each view in &lt;code&gt;viewsToChange&lt;/code&gt;. Here we have defined a &lt;strong&gt;ButterKnife.Setter&lt;/strong&gt; to take in a View and an Integer representing the visibility that each view in &lt;code&gt;viewsToChange&lt;/code&gt; should have.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;ButterKnife&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;viewsToChange&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SetInvisible&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;VISIBLE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;//...&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ButterKnife&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Action&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SetInvisible&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ButterKnife&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Action&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setVisibility&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;INVISIBLE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Setters&lt;/strong&gt;
+With Setters we’re able to take in a value property and &lt;em&gt;set&lt;/em&gt; a value on a view. Here we have defined a &lt;strong&gt;ButterKnife.Setter&lt;/strong&gt; to take in a View and an Integer representing the visibility that each view in &lt;code&gt;viewsToChange&lt;/code&gt; should have.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;ButterKnife&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;viewsToChange&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ChangeVisibility&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;VISIBLE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;//...&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ButterKnife&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Setter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ChangeVisibility&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ButterKnife&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Setter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setVisibility&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;So with Butter Knife we were able to simplify our app a little bit. Butter Knife is a pretty lightweight library that uses dependency injection along with annotations to provide binding between fields and methods and the views of the layout.&lt;/p&gt;
+
+&lt;p&gt;Butter Knife is pretty useful for avoiding lots of extra coding. Useful for binding not just views but event handling such as clicks. Also can be used for binding other resources. Here you can find the &lt;a href=&quot;https://github.com/miketraverso/ListViewToRecyclerView/tree/feature/user-butterknife&quot;&gt;complete source code&lt;/a&gt; of FaveBakes with all the buttery goodness of Butter Knife.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/butterknife/finished-product.png&quot; alt=&quot;Finished Product&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I hope this helps!&lt;/p&gt;
+</description>
+        <pubDate>Thu, 28 Apr 2016 12:33:33 -0400</pubDate>
+        <link>//traversoft.com/blog/2016/04/28/simplifying-your-android-code-with-butterknife/</link>
+        <guid isPermaLink="true">//traversoft.com/blog/2016/04/28/simplifying-your-android-code-with-butterknife/</guid>
+      </item>
     
       <item>
         <title>Replacing ListView with RecyclerView</title>
-        <description>&lt;p&gt;So if you’ve ever written an Android app, chances are that you’ve used a ListView. If you’re new to Android development, ListView is a common view that allows you to display in a table like view. Here’s a sample of what a ListView looks like running on an Android device. These views are similar in that they allow developers to display a collection of items in a table, or list, that can be scrolled through. It’s a very common UI component.&lt;/p&gt;
+        <description>&lt;p&gt;So if you’ve ever written an Android app, chances are that you’ve used a ListView. If you’re new to Android development, ListView is a common view that allows you to display in a table like view. Here’s a sample of what a ListView looks like running on an Android device, next to what a RecyclerView with the same data and same item layout. Both ListView and RecyclerView are similar in that they allow developers to display a collection of items in a table, or list, that can be scrolled through. It’s a very common UI component.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/favebakes-intro.png&quot; alt=&quot;Initial UI Layout&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;In this post we are going to look at an existing app that uses a ListView. Then we’re going to step by step replace the ListView with a RecyclerView. Let’s start looking at our existing app: Fave Bakes!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/favebakes-intro.png&quot; alt=&quot;Initial UI Layout&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;an-introduction-to-fave-bakes&quot;&gt;&lt;strong&gt;An introduction to Fave Bakes&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;Our existing app displays a list of favorite bakeries in the area. The bakery name, phone number, address, website and logo appear to the user and allow them to peruse a number of local bakeries.  So let’s take a look at our &lt;code&gt;Bakery&lt;/code&gt; model.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Bakery&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Bakery&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
     &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeryName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
@@ -40,7 +264,7 @@
 
 &lt;p&gt;While not a true POJO we just wanted something simple for our scenario. We load all the bakery data into this model so that we can display it in a ListView. So far pretty straightforward. Speaking of which, here’s our activity layout:&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;xml&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&lt;/span&gt;
 
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;RelativeLayout&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns:android=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res/android&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;xmlns:app=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res-auto&amp;quot;&lt;/span&gt;
@@ -67,9 +291,9 @@
 
 &lt;p&gt;In &lt;strong&gt;FaveBakes&lt;/strong&gt; we’re dealing with a very simple activity that just has a &lt;code&gt;ListView&lt;/code&gt; that takes up the screen, sets the background color and adds a padding to the top and bottom, left and right. Our list item view for each item of the &lt;code&gt;ListView&lt;/code&gt; is a bit more complicated. It displays the bakery image to the left of the bakery name, address, phone number, website and underneath all of that is a description of the bakery. Here’s what our &lt;strong&gt;list_item_bakery.xml&lt;/strong&gt; looks like and the layout xml that creates it.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/bakery_item.png&quot; alt=&quot;Sample Bakery Item Layout&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/bakery_item.png&quot; alt=&quot;Sample Bakery Item Layout&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;xml&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;LinearLayout&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;xmlns:android=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res/android&amp;quot;&lt;/span&gt;
           &lt;span class=&quot;na&quot;&gt;android:layout_width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;match_parent&amp;quot;&lt;/span&gt;
@@ -152,7 +376,7 @@
 
 &lt;p&gt;We override the &lt;code&gt;public View getView&lt;/code&gt; method to display our bakery information in each item of the ListView. (2) First we are going to see if we’ve already inflated the layout of the item. Inflating Android layouts is a resource intensive activity so if we’ve already done it before we don’t need to do it again. Simply we can reuse what we have already inflated and just change the values. (3) We get the bakery we want to display by looking up the position in the list of Bakery objects we passed in. (4) Then we use the Bakery object at that position to set the data for the view. (5) Finally, we return the fully configured View.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BakeryAdapter&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ArrayAdapter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BakeryAdapter&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ArrayAdapter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeries&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Context&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
@@ -211,7 +435,7 @@
 
 &lt;p&gt;Now it’s time to take a look at our Activity code to see how the ArrayAdapter&lt;bakery&gt; is tied to the ListView we saw in our layout file earlier. In our `onCreate` method we (1) inflate our activity and (2) load up our bakery data. (3) We then instantiate our `BakeryAdapter` that we just looked at, passing in the activity (for Context), the resource ID of the layout of the item we want to use, and the `List&lt;bakery&gt;` we want to display. (4) Next, inflating our ListView allows us to set the adapter on it so that our ListView knows what data, and how, to display.&lt;/bakery&gt;&lt;/bakery&gt;&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BakeryListingsActivity&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AppCompatActivity&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BakeryListingsActivity&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AppCompatActivity&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ListView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listingsView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeries&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
@@ -228,36 +452,29 @@
         &lt;span class=&quot;n&quot;&gt;loadBakeries&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
 
         &lt;span class=&quot;c1&quot;&gt;// 3. Initialize the Bakery adapter&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;BakeryAdapter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;adapter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BakeryAdapter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;list_item_bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeries&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;BakeryAdapter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;adapter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;BakeryAdapter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;list_item_bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeries&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
         &lt;span class=&quot;c1&quot;&gt;// 4. Inflate our ListView and set the adapter on it&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;listingsView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ListView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findViewById&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;listings_view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;listingsView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setAdapter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;adapter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
         &lt;span class=&quot;c1&quot;&gt;// 5. Handle the click&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;listingsView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setOnClickListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;OnClickListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;listingsView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setOnItemClickListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AdapterView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;OnItemClickListener&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
             &lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
-            &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onClick&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onItemClick&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AdapterView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;?&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;parent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;position&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
-                &lt;span class=&quot;n&quot;&gt;View&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;parentRow&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getParent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-                &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parentRow&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;ListView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ListView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getParent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;listView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
-                    &lt;span class=&quot;n&quot;&gt;ListView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ListView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;parentRow&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getParent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-                    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;listView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;Bakery&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeries&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;position&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
-                        &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;position&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getPositionForView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parentRow&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-
-                        &lt;span class=&quot;n&quot;&gt;Bakery&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeries&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;position&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-                        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-
-                            &lt;span class=&quot;n&quot;&gt;Toast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;makeText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Clicked on &amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakeryName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Toast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;LENGTH_SHORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;show&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-                        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+                        &lt;span class=&quot;n&quot;&gt;Toast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;makeText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Clicked on &amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bakeryName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Toast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;LENGTH_SHORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;show&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
                     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
                 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
             &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
         &lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;
-
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
     &lt;span class=&quot;c1&quot;&gt;// Loads bakery data into List&amp;lt;Bakery&amp;gt;&lt;/span&gt;
@@ -267,9 +484,9 @@
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setupActionBarTheme&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{...}&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;So that’s basically it. Here’s a GIF showing what the app looks like once launched. For a complete listing of this project go ahead and check out &lt;strong&gt;TODO&lt;/strong&gt; on GitHub.&lt;/p&gt;
+&lt;p&gt;So that’s basically it. Here’s a GIF showing what the app looks like once launched. For a complete listing of this project go ahead and check out &lt;a href=&quot;https://github.com/miketraverso/ListViewToRecyclerView&quot;&gt;the master and feature branch&lt;/a&gt; on GitHub.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/favebakes-listview.gif&quot; alt=&quot;FaveBakes ListView&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/favebakes-listview.gif&quot; alt=&quot;FaveBakes ListView&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;updating-to-recyclerview&quot;&gt;&lt;strong&gt;Updating to RecyclerView&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;We’ve just reviewed how ListView is used in Android. So now let’s do away with the old and bring in the new… bring on the RecyclerView!&lt;/p&gt;
@@ -321,11 +538,11 @@
 &lt;p&gt;So that’s a quick overview of the &lt;code&gt;RecyclerView&lt;/code&gt; and it’s components. Now we’re going to go replace the ListView with a &lt;code&gt;RecyclerView&lt;/code&gt; leveraging the components we just briefly talked about. Before we can begin though we need to tell our project where to pickup the API to use the RecyclerView. We’ll need to add the following: &lt;code&gt;compile &#39;com.android.support:recyclerview-v7:+&#39;&lt;/code&gt; under the &lt;code&gt;dependencies&lt;/code&gt; section.
 If you need help doing this, in Android Studio find the &lt;strong&gt;build.gradle&lt;/strong&gt; file in your &lt;strong&gt;Project&lt;/strong&gt; view that is under your &lt;strong&gt;app&lt;/strong&gt; folder. If you need help figuring which build.gradle this is here’s a screenshot to help you out.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/favebakes-update-gradle.png&quot; alt=&quot;Update the Gradle&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/favebakes-update-gradle.png&quot; alt=&quot;Update the Gradle&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Once you update the gradle file you’ll need to sync your project with your updated gradle file. This is done by tapping on the button shown below. Android Studio will go out and download the necessary library to your project so that you’ll be able to start using it.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/favebakes-update-gradle-btn.png&quot; alt=&quot;Update the Gradle&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/favebakes-update-gradle-btn.png&quot; alt=&quot;Update the Gradle&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Since our model is going to stay the same, let’s start with our activity layout file. Our parent layout, RelativeLayout stays exactly the same. We just swap out the ListView for android.support.v7.widget.RecyclerView.&lt;/p&gt;
 
@@ -333,7 +550,7 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 
 &lt;p&gt;We keep the id the same so that we don’t have to change that in our code, width, height and background all also stay the same.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;xml&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&lt;/span&gt;
 
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;RelativeLayout&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns:android=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res/android&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;xmlns:app=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res-auto&amp;quot;&lt;/span&gt;
@@ -360,7 +577,7 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 
 &lt;p&gt;Now let’s go back to look at our adapter. Before we can though we need to implement a ViewHolder. Remember from earlier, the ViewHolder helps the Adapter bind data to the item views. Our holder is going to extend RecyclerView.ViewHolder while implementing the View.OnClickListener interface. (1) Our constructor will take a Context and a View. (2) We’ll access our item UI widgets here so we define all of our TextView’s and our ImageView as we did in our ArrayAdapter. We’re basically moving that into our &lt;code&gt;BakeryHolder&lt;/code&gt;. The ViewHolder knows about the Bakery it’s bound to so no need to look up other views, figure out the position clicked and look up the bakery tied to that position. (3) Binding is something we need the BakeryHolder to do so we’ll go ahead and create a method called &lt;code&gt;bindBakery&lt;/code&gt; that takes in a Bakery object and sets the values of the UI widgets. (5) Lastly, we migrate our &lt;code&gt;onClick&lt;/code&gt; implementation into our BakeryHolder. This makes a bit more sense than having it on the ListView.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BakeryHolder&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ViewHolder&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;OnClickListener&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BakeryHolder&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ViewHolder&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;View&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;OnClickListener&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ImageView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeryLogo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TextView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeryName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
@@ -426,7 +643,7 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 
 &lt;p&gt;In onBindViewHolder, we (5) access the bakery at the proper position and bind it to the ViewHolder. This is where that “magic” happens that tells an item at a particular position which data to display. Finally we override the getItemCount and return the number of items in our data set.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BakeryAdapter&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Adapter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BakeryHolder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;BakeryAdapter&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Adapter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BakeryHolder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeries&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Context&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
@@ -470,8 +687,8 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 
 &lt;p&gt;With our Adapter updated and ViewHolder created we can update our Activity. Our adapter constructor doesn’t change. It still takes a Context, the resource id of the item layout and the data set. (5) We change the type of the listingsView from ListView to RecyclerView. (6) Seeing as our RecyclerView doesn’t change height or width within FaveBakes, we can tell &lt;code&gt;listingsView&lt;/code&gt; that it has a fixed size. This is for performance reasons. If your app requires the RecyclerView to change size don’t do this. (9) We now continue to set the adapter of our RecyclerView. Nothing changes here either.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// 3. Initialize the Bakery adapter... unchanged.&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;BakeryAdapter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;adapter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BakeryAdapter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;list_item_bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeries&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// 3. Initialize the Bakery adapter... unchanged.&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;BakeryAdapter&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;adapter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;BakeryAdapter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;list_item_bakery&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bakeries&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
 &lt;span class=&quot;c1&quot;&gt;// 4. Initialize ItemAnimator, LayoutManager and ItemDecorators&lt;/span&gt;
 
@@ -495,7 +712,7 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 
 &lt;p&gt;For instance, to create your own custom ItemDecorator we’ll extend the  &lt;code&gt;RecyclerView.ItemDecoration&lt;/code&gt; class. For adding in some vertical spacing, we override the &lt;code&gt;getItemOffsets&lt;/code&gt; method. The &lt;code&gt;outRect&lt;/code&gt; parameter that gets passed in lets you access the &lt;code&gt;Rect&lt;/code&gt; that the item will take up with no padding. (2) Setting the value of the bottom field on &lt;code&gt;outRect&lt;/code&gt; to a value will create an &lt;strong&gt;offset&lt;/strong&gt; to that side of the rectangle representing the item. What we do in the VerticalSpaceItemDecorator is check to make sure that the item we’re looking at isn’t the last item in the collection. No need to add a bottom padding to the last item. We could have acheived the same result by adding an offset value to the top field of &lt;code&gt;outRect&lt;/code&gt; and not adding that padding to the first item in the collection.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;VerticalSpaceItemDecorator&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ItemDecoration&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;VerticalSpaceItemDecorator&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ItemDecoration&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;verticalSpaceHeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
 
@@ -521,7 +738,7 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 
 &lt;p&gt;With a drop shadow, we’ll first create a new drawable and name it &lt;strong&gt;drop_shadow.xml&lt;/strong&gt;. Then we’ll create a shape, with a size and color as seen below.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;xml&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&lt;/span&gt;
 &lt;span class=&quot;nt&quot;&gt;&amp;lt;shape&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns:android=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res/android&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;android:shape=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;rectangle&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
     &lt;span class=&quot;nt&quot;&gt;&amp;lt;size&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;android:height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;4dp&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
@@ -530,7 +747,7 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 
 &lt;p&gt;Then we’ll again extend RecyclerView.ItemDecoration in a new class. In our constructor we load the drawable resource we just created. Then in the onDraw mehod that we will override, we’ll make sure we set the drop shadow rectangle to (1) be the same width as the RecyclerView and (2 &amp;amp; 3) iterate through each item to (4) determine the top and bottom constraints of where the drop shadow should be drawn. (5) Once we have the bounds of the drawable for the drop shadow we (6) draw it to the canvas.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ShadowVerticalSpaceItemDecorator&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ItemDecoration&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ShadowVerticalSpaceItemDecorator&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ItemDecoration&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
     &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Drawable&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;divider&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
 
@@ -571,8 +788,8 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 
 &lt;p&gt;Next we define a spacing for how far apart we want our list items to appear. In our case 20. We pass that into the VerticalSpaceItemDecorator constructor we created earlier. Then lastly we’ll create an instance of a ShadowVerticalSpaceItemDecorator passing in the activity as the context and the resource of the drop_shadow drawable. To wrap everything up we’ll (7) set the layoutManager of the RecyclerView and (8) add the item decorators to the RecyclerView. Here we make two calls to the &lt;code&gt;addItemDecoration&lt;/code&gt; method on the RecyclerView instance. First we add the shadow and then the vertical spacing decoration.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// 4. Initialize ItemAnimator, LayoutManager and ItemDecorators&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;LayoutManager&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;layoutManager&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LinearLayoutManager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// 4. Initialize ItemAnimator, LayoutManager and ItemDecorators&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;RecyclerView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;LayoutManager&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;layoutManager&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;LinearLayoutManager&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
 &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;verticalSpacing&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;VerticalSpaceItemDecorator&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;itemDecorator&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
@@ -591,66 +808,69 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 
 &lt;p&gt;If we go ahead and compile and run we should see the following:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/favebakes-recyclerview.gif&quot; alt=&quot;FaveBakes RecyclerView&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/favebakes-recyclerview.gif&quot; alt=&quot;FaveBakes RecyclerView&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;tldr&quot;&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/h2&gt;
-&lt;p&gt;We reviewed an existing app that leveraged ListView to display data. We added the ability to use RecyclerView by updating and syncing our gradle file. Then we covered the RecyclerView and it’s most important components such as:
-  * RecyclerView.ViewHolder to handle the item’s content/user interaction and where in the RecyclerView it belongs.
-  * RecyclerView.Adapter to provide binding between the items and the underlying data.
-  * RecyclerView.LayoutManager to set how the items are laid out.
-  * RecyclerView.ItemAnimator to define animations of items.
-  * RecyclerView.ItemDecorator to decorate the items.&lt;/p&gt;
+&lt;p&gt;We reviewed an existing app that leveraged ListView to display data. We added the ability to use RecyclerView by updating and syncing our gradle file. Then we covered the RecyclerView and it’s most important components such as:&lt;/p&gt;
 
-&lt;p&gt;Then we went and finished our migration to RecyclerView by implementing the components listed above and changing our activity layout to swap out ListView for RecyclerView.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;RecyclerView.ViewHolder to handle the item’s content/user interaction and where in the RecyclerView it belongs.&lt;/li&gt;
+  &lt;li&gt;RecyclerView.Adapter to provide binding between the items and the underlying data.&lt;/li&gt;
+  &lt;li&gt;RecyclerView.LayoutManager to set how the items are laid out.&lt;/li&gt;
+  &lt;li&gt;RecyclerView.ItemAnimator to define animations of items.&lt;/li&gt;
+  &lt;li&gt;RecyclerView.ItemDecorator to decorate the items.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Then we went and finished our migration to RecyclerView by implementing the components listed above and changing our activity layout to swap out ListView for RecyclerView. The project is located on &lt;a href=&quot;https://github.com/miketraverso/ListViewToRecyclerView/&quot;&gt;GitHub&lt;/a&gt;. To look at the whole project using the list view you can find it &lt;a href=&quot;https://github.com/miketraverso/ListViewToRecyclerView/&quot;&gt;here&lt;/a&gt;. Or if you’re looking for the update it’s on the feature/replace-list-view branch located &lt;a href=&quot;https://github.com/miketraverso/ListViewToRecyclerView/tree/feature/replace-list-view&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;I hope this helps you updating your project to RecyclerView.&lt;/p&gt;
 </description>
         <pubDate>Sun, 31 Jan 2016 11:33:33 -0500</pubDate>
-        <link>//miketraverso.github.io/2016/01/31/replace-listview-with-recyclerview/</link>
-        <guid isPermaLink="true">//miketraverso.github.io/2016/01/31/replace-listview-with-recyclerview/</guid>
+        <link>//traversoft.com/blog/2016/01/31/replace-listview-with-recyclerview/</link>
+        <guid isPermaLink="true">//traversoft.com/blog/2016/01/31/replace-listview-with-recyclerview/</guid>
       </item>
     
       <item>
         <title>Animation with Autolayout</title>
-        <description>&lt;p&gt;Lots of apps take advantage of autolayout, and if your app isn’t currently you really should check out implementing it. Autolayout is a great tool for getting all your UIView components to be in the right place and be the right size. Animation is just the movement of objects. Sort of seems like we have two diametrically opposing concepts here; autolayout to get things in the right place with the right size and animation to move those same things around. They’re not though and here’s why: autolayout ensures the correct position of the UIViews before and after any animation (i.e. scaling, translation, etc.). &lt;/p&gt;
+        <description>&lt;p&gt;Lots of apps take advantage of autolayout, and if your app isn’t currently you really should check out implementing it. Autolayout is a great tool for getting all your UIView components to be in the right place and be the right size. Animation is just the movement of objects. Sort of seems like we have two diametrically opposing concepts here; autolayout to get things in the right place with the right size and animation to move those same things around. They’re not though and here’s why: autolayout ensures the correct position of the UIViews before and after any animation (i.e. scaling, translation, etc.).&lt;/p&gt;
 
 &lt;p&gt;In the scenario below we’re going to animate a &lt;code&gt;UIButton&lt;/code&gt; into a view with a move up and fade in animation. First let’s go ahead and find the XIB or Storyboard that we want to add the button to.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/AutolayoutAnim-01-UISetup.png&quot; alt=&quot;Initial UI Layout&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnim-01-UISetup.png&quot; alt=&quot;Initial UI Layout&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Next we will use autolayout to ensure that the button is in the center of the view with a specific width and height. If you need a refresher on how to setup constraints, hold the &lt;strong&gt;Control&lt;/strong&gt; key down then click and drag from the view you want to impact to the view you want to create a relationship to. In our scenario we want to create constraints between the UIButton and the super view. We also want to establish height and width constraints. To do this, hold &lt;strong&gt;Control&lt;/strong&gt; down and click &amp;amp; drag from the UIButton and release while still moused over the UIButton. You should see the ‘Height’ and ‘Width’ options from the context menu.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/AutolayoutAnim-02-HowToSetupConstraints.png&quot; alt=&quot;Instructional graphic for setting up a constraint via Interface builder&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnim-02-HowToSetupConstraints.png&quot; alt=&quot;Instructional graphic for setting up a constraint via Interface builder&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;First create a constraint between the button and the super view to &lt;code&gt;Center Horizontally in Center&lt;/code&gt;. Then create a constraint between the button and the super view to &lt;code&gt;Center Vertically in Center&lt;/code&gt;. Finally, create two more constraints for the button’s height and width. When you’re done setting up the constraints it should look similar to this. &lt;/p&gt;
+&lt;p&gt;First create a constraint between the button and the super view to &lt;code&gt;Center Horizontally in Center&lt;/code&gt;. Then create a constraint between the button and the super view to &lt;code&gt;Center Vertically in Center&lt;/code&gt;. Finally, create two more constraints for the button’s height and width. When you’re done setting up the constraints it should look similar to this.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/AutolayoutAnim-02-ConstraintSetup.png&quot; alt=&quot;Setting up the constraints&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnim-02-ConstraintSetup.png&quot; alt=&quot;Setting up the constraints&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Next up we’re going to go ahead and set the constant value of the &lt;code&gt;Center Vertically in Center&lt;/code&gt; constraint. Our goal is to animate the button up so we will first have to set its initial position a bit further down on the view. In this case, let’s say 100 points. Now our button is 100 points south of where we want it to be when we’re done animating. &lt;/p&gt;
+&lt;p&gt;Next up we’re going to go ahead and set the constant value of the &lt;code&gt;Center Vertically in Center&lt;/code&gt; constraint. Our goal is to animate the button up so we will first have to set its initial position a bit further down on the view. In this case, let’s say 100 points. Now our button is 100 points south of where we want it to be when we’re done animating.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/AutolayoutAnim-02-ConstraintSetup.png&quot; alt=&quot;Setting the constraint constant value&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnim-02-ConstraintSetup.png&quot; alt=&quot;Setting the constraint constant value&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Let’s juice this up a bit and have it fade in while it moves up. To fade it in, it must first be faded out. Setting the alpha level on the button itself will do the trick&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/AutolayoutAnimation-05-SetAlpha.png&quot; alt=&quot;Setting up the alpha level to 0&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnimation-05-SetAlpha.png&quot; alt=&quot;Setting up the alpha level to 0&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Cool, we’re almost done with interface builder. We’ll just go ahead and create outlets for the button and the button’s vertical constraint within the view. Go ahead and create these constraints. Lots of times properties are created in the header file but if you don’t need to expose these properties to other classes we can go ahead and keep them private within the implementation. While it’s pretty well known on how to create the property for a button, you may not have done this for a constraint. Luckily though it’s just as simple. Instead of dragging from the button, find the constraint and click and drag from there as seen in the screenshot below.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/AutolayoutAnimation-06-CreateConstraintOutlet.png&quot; alt=&quot;Outlet connection for constraint&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnimation-06-CreateConstraintOutlet.png&quot; alt=&quot;Outlet connection for constraint&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Your constraints should look pretty much like this:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/AutolayoutAnimation-06-OutletCreated.png&quot; alt=&quot;Constraints should like like example&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/AutolayoutAnimation-06-OutletCreated.png&quot; alt=&quot;Constraints should like like example&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Now for the final part. Adding in the animation. To animate with autolayout we will change the constant of the vertical constraint. Remember we initially set this to be 100. We want to animate the button back to the center of the screen so we can set this constant value to 0. If we were to add this constant change to the animations block of a &lt;code&gt;[UIView animateWithDuration:animations]&lt;/code&gt; call we would see the button in the place we want it but no animation. The reason being that setting the constant is just the first step. The actual change happens when the layout is redrawn with the new constraint constant. So if we set the constraint constant and then in the animation block make a call to &lt;code&gt;layoutIfNeeded&lt;/code&gt; we will see the animation occur where the button starts out 100 points off of center and moves up to center. Inside the animation block we’ll add a call to set the button’s alpha level to 1 so that it’s fully visible. Check out the snippet below where we have this coded up in the &lt;code&gt;viewDidAppear&lt;/code&gt; method of the view. Following the code snippet we have a sample of what this animation will look like on the device. Play around with the duration value but remember users didn’t download your app to watch animated feature films so keep them relevant and don’t keep users waiting for complex animations to happen before they can use your app.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;objective-c&quot;&gt;&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;viewDidAppear:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;animated&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;viewDidAppear:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;animated&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     
-    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;super&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;viewDidAppear&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;animated&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;super&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;viewDidAppear&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;animated&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
     
     &lt;span class=&quot;n&quot;&gt;constraintButtonVertPosition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;constant&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 
-    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;animateWithDuration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;.5f&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;animations&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;UIView&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;animateWithDuration&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;.5f&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;animations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;n&quot;&gt;btnLogin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
         &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;btnLogin&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;layoutIfNeeded&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;}];&lt;/span&gt;
@@ -658,12 +878,12 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 
 &lt;p&gt;And here it is in action… hope this helps!&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/loginAnimation.gif&quot; alt=&quot;Sample animation&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/images/loginAnimation.gif&quot; alt=&quot;Sample animation&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 </description>
         <pubDate>Thu, 01 Oct 2015 12:33:33 -0400</pubDate>
-        <link>//miketraverso.github.io/2015/10/01/objc-animate-autolayout/</link>
-        <guid isPermaLink="true">//miketraverso.github.io/2015/10/01/objc-animate-autolayout/</guid>
+        <link>//traversoft.com/blog/2015/10/01/objc-animate-autolayout/</link>
+        <guid isPermaLink="true">//traversoft.com/blog/2015/10/01/objc-animate-autolayout/</guid>
       </item>
     
       <item>
@@ -672,15 +892,15 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 
 &lt;p&gt;&lt;img src=&quot;/images/set-uiimage-in-xcode.png&quot; alt=&quot;XCode Breakpoint at UIImage initialization&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Then by clicking the &lt;em&gt;eyeball&lt;/em&gt; icon we get a nice preview of the image. Pretty neat. &lt;/p&gt;
+&lt;p&gt;Then by clicking the &lt;em&gt;eyeball&lt;/em&gt; icon we get a nice preview of the image. Pretty neat.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/preview-uiimage-in-xcode.png&quot; alt=&quot;Preview UIImage in XCode&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;I know this probably won’t be incredibly useful to lots of folks but hopefully it comes in handy for someone that’s struggling to make sure they have the right image at the right time.&lt;/p&gt;
 </description>
         <pubDate>Tue, 15 Sep 2015 11:33:41 -0400</pubDate>
-        <link>//miketraverso.github.io/2015/09/15/xcode-debugging-images/</link>
-        <guid isPermaLink="true">//miketraverso.github.io/2015/09/15/xcode-debugging-images/</guid>
+        <link>//traversoft.com/blog/2015/09/15/xcode-debugging-images/</link>
+        <guid isPermaLink="true">//traversoft.com/blog/2015/09/15/xcode-debugging-images/</guid>
       </item>
     
       <item>
@@ -691,11 +911,11 @@ If you need help doing this, in Android Studio find the &lt;strong&gt;build.grad
 Let’s go ahead and select a &lt;strong&gt;Blank Activity&lt;/strong&gt; and we can keep the default name of MainActivity for this activity. 
 Now we’re ready to start getting our app customized!&lt;/p&gt;
 
-&lt;p&gt;Android has come a long way in terms of its look and feel. Unfortunately, though it’s not as easy to completely get your app’s UI components to match the theme of your app. With iOS you could simply chose the font you wanted for a label from a dropdown. Android doesn’t make this as simple. For example, if you want to use a custom font for your TextView you would have to create the &lt;code&gt;TextView&lt;/code&gt; in the layout file, get a reference to that component by its ID then load your font into a &lt;code&gt;TypeFace&lt;/code&gt; and apply the &lt;code&gt;Typeface&lt;/code&gt; to your &lt;code&gt;TextView&lt;/code&gt; reference. Let’s walk through how we would do that with a specific example. &lt;/p&gt;
+&lt;p&gt;Android has come a long way in terms of its look and feel. Unfortunately, though it’s not as easy to completely get your app’s UI components to match the theme of your app. With iOS you could simply chose the font you wanted for a label from a dropdown. Android doesn’t make this as simple. For example, if you want to use a custom font for your TextView you would have to create the &lt;code&gt;TextView&lt;/code&gt; in the layout file, get a reference to that component by its ID then load your font into a &lt;code&gt;TypeFace&lt;/code&gt; and apply the &lt;code&gt;Typeface&lt;/code&gt; to your &lt;code&gt;TextView&lt;/code&gt; reference. Let’s walk through how we would do that with a specific example.&lt;/p&gt;
 
 &lt;p&gt;Here’s our layout for our MainActivity and below the layout XML we have a screenshot of what the app looks like. Go ahead and copy and paste this into your activity_mail.xml. We are setting up a &lt;code&gt;RelativeLayout&lt;/code&gt; with three components. A &lt;code&gt;TextView&lt;/code&gt;, an &lt;code&gt;EditText&lt;/code&gt; component and a &lt;code&gt;Button&lt;/code&gt;. Pretty simple interface.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;RelativeLayout&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns:android=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res/android&amp;quot;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;RelativeLayout&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns:android=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res/android&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;xmlns:tools=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/tools&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;android:layout_width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;match_parent&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;android:layout_height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;match_parent&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;android:paddingLeft=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@dimen/activity_horizontal_margin&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;android:paddingRight=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@dimen/activity_horizontal_margin&amp;quot;&lt;/span&gt;
@@ -726,9 +946,9 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/default-app-components.png&quot; alt=&quot;App without customization&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Now we can update our MainActivity.java but adding to our &lt;strong&gt;onCreate&lt;/strong&gt; method the following code. With the following code we are going to create a &lt;code&gt;Typeface&lt;/code&gt; with our font. Then we are going to apply that &lt;code&gt;Typeface&lt;/code&gt; to our &lt;code&gt;TextView&lt;/code&gt;. This will allow the &lt;code&gt;TextView&lt;/code&gt; to appear with the Gotham-Bold font. &lt;/p&gt;
+&lt;p&gt;Now we can update our MainActivity.java but adding to our &lt;strong&gt;onCreate&lt;/strong&gt; method the following code. With the following code we are going to create a &lt;code&gt;Typeface&lt;/code&gt; with our font. Then we are going to apply that &lt;code&gt;Typeface&lt;/code&gt; to our &lt;code&gt;TextView&lt;/code&gt;. This will allow the &lt;code&gt;TextView&lt;/code&gt; to appear with the Gotham-Bold font.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onCreate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bundle&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onCreate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bundle&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
 	&lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;onCreate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 	&lt;span class=&quot;n&quot;&gt;setContentView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;activity_layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
@@ -741,7 +961,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;In this example, you can see that in the activity’s &lt;code&gt;onCreate(Bundle savedInstanceState)&lt;/code&gt; method we set the content view and from the loaded view layout we get a reference to the &lt;code&gt;TextView&lt;/code&gt; with identifier &lt;em&gt;myTextView&lt;/em&gt;. &lt;/p&gt;
+&lt;p&gt;In this example, you can see that in the activity’s &lt;code&gt;onCreate(Bundle savedInstanceState)&lt;/code&gt; method we set the content view and from the loaded view layout we get a reference to the &lt;code&gt;TextView&lt;/code&gt; with identifier &lt;em&gt;myTextView&lt;/em&gt;.&lt;/p&gt;
 
 &lt;p&gt;The next step is to create a &lt;code&gt;Typeface&lt;/code&gt; object with the font you want to use. I’m using the Gotham-Bold.otf font file, but you would replace with your own font file along with the correct path to said font file if you wanted to create a different directory to keep your font assets in. In my case, under all my font’s can be found in the newly created &lt;strong&gt;assets&lt;/strong&gt; directory where I have a sub-folder named &lt;strong&gt;fonts&lt;/strong&gt;&lt;/p&gt;
 
@@ -749,7 +969,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 
 &lt;p&gt;In the final step we call setTypeface on the desired &lt;code&gt;TextView&lt;/code&gt; object and we now have a label with our custom font. Check out the screenshot below to see what this code will generate in the app. Pretty cool huh? We can do the same with an &lt;code&gt;EditText&lt;/code&gt;:&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onCreate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bundle&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onCreate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bundle&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
 	&lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;onCreate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 	&lt;span class=&quot;n&quot;&gt;setContentView&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;activity_layout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
@@ -773,7 +993,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 
 &lt;p&gt;Before we get into the nitty gritty add the following class to your project. It’s main function is to load a font from the &lt;strong&gt;font&lt;/strong&gt;’s folder of your app’s &lt;strong&gt;assets&lt;/strong&gt; directory. Just to avoid loading and reloading the same font into memory over and over again as you begin to use it.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;traversoft&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;customuicomponentsdemo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;traversoft&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;customuicomponentsdemo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
 
 &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.content.Context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.graphics.Typeface&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
@@ -800,7 +1020,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 
 &lt;p&gt;Now let’s create a new java file in your project and call it &lt;code&gt;PositiveActionButton.java&lt;/code&gt;. Here we’ll create a custom class that extends &lt;code&gt;Button&lt;/code&gt; to set the typeface, set the background color, the button font color and set the default font size.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;traversoft&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;customuicomponentsdemo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;traversoft&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;customuicomponentsdemo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
 
 &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.content.Context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.util.AttributeSet&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
@@ -839,9 +1059,9 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;We just need to update our &lt;code&gt;activity_main.xml&lt;/code&gt; layout to leverage this new UI component. Here’s the listing below. We’ve replaced the &amp;lt;Button&amp;gt; component with our custom PositiveActionButton component. Notice that we’ve given the fully qualified package name here. I believe in the latest version of Android Studio this isn’t necessary but in the version I’ve used to build this is still necessary. Notice though that we’re not creating more complicated layout files wherever we want the same positive action button to appear. For every time we would want to have a button that has custom font, text color, background color and text size we would have to duplicate that code over and over again. With our custom class we take care of that in one place.&lt;/p&gt;
+&lt;p&gt;We just need to update our &lt;code&gt;activity_main.xml&lt;/code&gt; layout to leverage this new UI component. Here’s the listing below. We’ve replaced the &lt;button&gt; component with our custom PositiveActionButton component. Notice that we’ve given the fully qualified package name here. I believe in the latest version of Android Studio this isn’t necessary but in the version I’ve used to build this is still necessary. Notice though that we’re not creating more complicated layout files wherever we want the same positive action button to appear. For every time we would want to have a button that has custom font, text color, background color and text size we would have to duplicate that code over and over again. With our custom class we take care of that in one place.&lt;/button&gt;&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;RelativeLayout&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns:android=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res/android&amp;quot;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;RelativeLayout&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns:android=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res/android&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;xmlns:tools=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/tools&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;android:layout_width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;match_parent&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;android:layout_height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;match_parent&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;android:paddingLeft=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@dimen/activity_horizontal_margin&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;android:paddingRight=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;@dimen/activity_horizontal_margin&amp;quot;&lt;/span&gt;
@@ -876,7 +1096,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 
 &lt;p&gt;Looking pretty good right. Except we have that ugly default font in our ActivityBar. No offense Google, but that just doesn’t match the app anymore. So let’s update that font to match what we have for our custom Button, EditText and TextView. Let’s go ahead and create a new Java file in our package that we’ll call &lt;strong&gt;CustomTypefaceSpan.java&lt;/strong&gt;. Here’s the code we’ll use in this class&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;traversoft&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;customuicomponentsdemo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;traversoft&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;customuicomponentsdemo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
 
 &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.content.Context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
 &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.graphics.Paint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
@@ -918,10 +1138,10 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 
 &lt;p&gt;Next we’re going to override &lt;code&gt;updateDrawState(TextPaint paint)&lt;/code&gt; and &lt;code&gt;updateMeasureState(TextPaint paint)&lt;/code&gt; to call a method that we’ll use to set the typeface of the custom &lt;code&gt;Paint&lt;/code&gt; so that it knows what to do (i.e. paint the text on the screen with the specified font). Lastly we will want to leverage this so let’s add the following method to &lt;strong&gt;MainActivity.java&lt;/strong&gt; and add a call to this method at the end of the &lt;strong&gt;onCreate&lt;/strong&gt; method.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setupCustomActionBar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setupCustomActionBar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
-    &lt;span class=&quot;n&quot;&gt;SpannableStringBuilder&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spannedTitle&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SpannableStringBuilder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getTitle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;spannedTitlte&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setSpan&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CustomTypefaceSpan&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getApplicationContext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spannedTitle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Spanned&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;SPAN_EXCLUSIVE_INCLUSIVE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;SpannableStringBuilder&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spannedTitle&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;SpannableStringBuilder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getTitle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;spannedTitlte&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setSpan&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;CustomTypefaceSpan&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getApplicationContext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;spannedTitle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Spanned&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;SPAN_EXCLUSIVE_INCLUSIVE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 
     &lt;span class=&quot;n&quot;&gt;ActionBar&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;actionBar&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getActionBar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;actionBar&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
@@ -934,21 +1154,21 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/images/custom-text-button-actionbar-components.png&quot; alt=&quot;App with custom TextView, EditText fonts, custom Button and custom font for the ActionBar&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 </description>
         <pubDate>Tue, 01 Sep 2015 08:36:01 -0400</pubDate>
-        <link>//miketraverso.github.io/2015/09/01/android-custom-ui-components/</link>
-        <guid isPermaLink="true">//miketraverso.github.io/2015/09/01/android-custom-ui-components/</guid>
+        <link>//traversoft.com/blog/2015/09/01/android-custom-ui-components/</link>
+        <guid isPermaLink="true">//traversoft.com/blog/2015/09/01/android-custom-ui-components/</guid>
       </item>
     
       <item>
         <title>Having trouble with Fabric and Android Studio?</title>
-        <description>&lt;p&gt;Fabric, (www.fabric.io) is the new umbrella webapp from Twitter that incorporates all of Twitter’s APIs. Fabric provides plugins for XCode, IntelliJ, Eclipse and Android Studio providing support for Crashlytics, Twitter, MoPub and Digits. It’s extremely easy to get setup, most of the time that is, with it’s walkthrough setup process. There are parts of the setup that either wait for you to do something and in most cases will actually update your files with the necessary code. No need to track down files, figure out where to make the change, make the change and hope for the best. &lt;/p&gt;
+        <description>&lt;p&gt;Fabric, (www.fabric.io) is the new umbrella webapp from Twitter that incorporates all of Twitter’s APIs. Fabric provides plugins for XCode, IntelliJ, Eclipse and Android Studio providing support for Crashlytics, Twitter, MoPub and Digits. It’s extremely easy to get setup, most of the time that is, with it’s walkthrough setup process. There are parts of the setup that either wait for you to do something and in most cases will actually update your files with the necessary code. No need to track down files, figure out where to make the change, make the change and hope for the best.&lt;/p&gt;
 
 &lt;p&gt;Today though I came across a bit of a problem getting Fabric and the Crashlytics API properly installed in my version of Android Studio. A bit of background on my situation. I’ve got an Android only, libgdx based, project running with the latest stable Android Studio (v1.3.0.10). LibGDX allows you to create projects that run cross platform. Web, iOS, Android, Windows, Mac… heck even Blackberry. One of the nasty results of this is that there are multiple projects with multiple &lt;code&gt;build.gradle&lt;/code&gt; files. Which probably led to my issue :&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/gradle-error.png&quot; alt=&quot;Android Studio with Gradle build error&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;Basically my AndroidLauncher.java, which is my app’s entry point, where I am calling the Fabric setup methods, complained that it couldn’t find teh Crashlyitcs and Fabric packages. Ruh-roh right? &lt;/p&gt;
+&lt;p&gt;Basically my AndroidLauncher.java, which is my app’s entry point, where I am calling the Fabric setup methods, complained that it couldn’t find teh Crashlyitcs and Fabric packages. Ruh-roh right?&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;traversoft&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hff&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;android&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;traversoft&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;hff&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;android&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
 
 &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;android.os.Bundle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
 
@@ -962,18 +1182,18 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 	&lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
 	&lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onCreate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bundle&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 		&lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;onCreate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;savedInstanceState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;Fabric&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;with&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Crashlytics&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;AndroidApplicationConfiguration&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AndroidApplicationConfiguration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-		&lt;span class=&quot;n&quot;&gt;initialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HereFishyFishyMain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;Fabric&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;with&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;Crashlytics&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;AndroidApplicationConfiguration&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;AndroidApplicationConfiguration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+		&lt;span class=&quot;n&quot;&gt;initialize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;HereFishyFishyMain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
 	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Something went wrong with the setup process. So let’s check out our main build.gradle file.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;basemake&quot;&gt;&lt;span class=&quot;err&quot;&gt;buildscript&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-basemake&quot; data-lang=&quot;basemake&quot;&gt;&lt;span class=&quot;err&quot;&gt;buildscript&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;err&quot;&gt;repositories&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;err&quot;&gt;mavenCentral()&lt;/span&gt;
-        &lt;span class=&quot;nf&quot;&gt;maven { url &amp;quot;https&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;//oss.sonatype.org/content/repositories/snapshots/&amp;quot; }&lt;/span&gt;
+        &lt;span class=&quot;nf&quot;&gt;maven { url &amp;quot;https&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;//&lt;span class=&quot;n&quot;&gt;oss&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;sonatype&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;org&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;content&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;repositories&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;snapshots&lt;/span&gt;/&amp;quot; }
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
     dependencies &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
         classpath &lt;span class=&quot;s1&quot;&gt;&amp;#39;com.android.tools.build:gradle:1.2.3&amp;#39;&lt;/span&gt;
@@ -981,7 +1201,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
 
 &lt;span class=&quot;err&quot;&gt;allprojects&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nf&quot;&gt;apply plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;&amp;quot;eclipse&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;apply plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &amp;quot;&lt;span class=&quot;n&quot;&gt;eclipse&lt;/span&gt;&amp;quot;
     apply plugin: &lt;span class=&quot;s2&quot;&gt;&amp;quot;idea&amp;quot;&lt;/span&gt;
 
     &lt;span class=&quot;nv&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.0&amp;#39;&lt;/span&gt;
@@ -1001,7 +1221,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
 
-&lt;span class=&quot;nf&quot;&gt;project(&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;android&amp;quot;) {&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;project(&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;android&lt;/span&gt;&amp;quot;) {
     apply plugin: &lt;span class=&quot;s2&quot;&gt;&amp;quot;android&amp;quot;&lt;/span&gt;
 
     configurations &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; natives &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
@@ -1025,7 +1245,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
 
-&lt;span class=&quot;nf&quot;&gt;project(&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;core&amp;quot;) {&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;project(&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;core&lt;/span&gt;&amp;quot;) {
     apply plugin: &lt;span class=&quot;s2&quot;&gt;&amp;quot;java&amp;quot;&lt;/span&gt;
 
 
@@ -1048,7 +1268,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 
 &lt;p&gt;So the problem here is that there is no mention anywhere to getting the necessary jars for a complete Fabric/Crashlytics installation. So let’s go add it. First off we will need to add repositories and dependencies to the buildscript section of the build.gradle file&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;buildscript {
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;buildscript {
     repositories {
         mavenCentral()
         jcenter()
@@ -1061,9 +1281,9 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
     }
 }&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;code&gt;jcenter()&lt;/code&gt; refers to the new hotness that is a new maven repository for Android Studio’s gradle plugin. &lt;a href=&quot;https://bintray.com/bintray/jcenter&quot;&gt;Check it out here&lt;/a&gt;. Then we have the Fabric specific maven url. Under dependencies we see the Fabric classpath pointing to the latest version 1.+. Next we look to apply our Fabric plugin. In my case it’s under &lt;code&gt;project(&quot;:android&quot;)&lt;/code&gt; if you’re just using a basic android app gradle.build this probably won’t be within a &lt;code&gt;project&lt;/code&gt; block and would just normally be under the &lt;code&gt;buildscript&lt;/code&gt; section.     &lt;/p&gt;
+&lt;p&gt;&lt;code&gt;jcenter()&lt;/code&gt; refers to the new hotness that is a new maven repository for Android Studio’s gradle plugin. &lt;a href=&quot;https://bintray.com/bintray/jcenter&quot;&gt;Check it out here&lt;/a&gt;. Then we have the Fabric specific maven url. Under dependencies we see the Fabric classpath pointing to the latest version 1.+. Next we look to apply our Fabric plugin. In my case it’s under &lt;code&gt;project(&quot;:android&quot;)&lt;/code&gt; if you’re just using a basic android app gradle.build this probably won’t be within a &lt;code&gt;project&lt;/code&gt; block and would just normally be under the &lt;code&gt;buildscript&lt;/code&gt; section.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;project(&amp;quot;:android&amp;quot;) {
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;project(&amp;quot;:android&amp;quot;) {
     apply plugin: &amp;quot;android&amp;quot;
     apply plugin: &amp;#39;io.fabric&amp;#39;
 
@@ -1078,19 +1298,19 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 
 &lt;p&gt;Here we re adding our &lt;code&gt;apply plugin: &#39;io.fabric&#39;&lt;/code&gt; command and adding our repositories block. So that covers what Twitter covers in their manual setup &lt;a href=&quot;http://docs.fabric.io/android/fabric/integration.html&quot;&gt;blog&lt;/a&gt;. If you sync up your gradle build now you should be all good to go… except you won’t be. The Twitter blog fails to mention that you also need to add the following under your Android app’s &lt;code&gt;dependencies&lt;/code&gt; section.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;text&quot;&gt;compile(&amp;#39;com.crashlytics.sdk.android:crashlytics:2.2.3@aar&amp;#39;) {
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;compile(&amp;#39;com.crashlytics.sdk.android:crashlytics:2.2.3@aar&amp;#39;) {
     transitive = true;
 }&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;We’re specifying &lt;code&gt;transitive = true;&lt;/code&gt; to get any dependencies that the crashlytics aar depends upon. (FYI: An AAR is the binary distribution of an Android Library Project, like an &lt;strong&gt;A&lt;/strong&gt;ndroid &lt;strong&gt;AR&lt;/strong&gt;chive). Once this is added we’re all done and we’ll notice if we gradle sync now our entry point class, or wherever you’ve added &lt;code&gt;Fabric.with(this, new Crashlytics());&lt;/code&gt; will now be able to find the necessary libraries it needs to compile. Here’s a full listing of my build.gradle for reference. &lt;/p&gt;
+&lt;p&gt;We’re specifying &lt;code&gt;transitive = true;&lt;/code&gt; to get any dependencies that the crashlytics aar depends upon. (FYI: An AAR is the binary distribution of an Android Library Project, like an &lt;strong&gt;A&lt;/strong&gt;ndroid &lt;strong&gt;AR&lt;/strong&gt;chive). Once this is added we’re all done and we’ll notice if we gradle sync now our entry point class, or wherever you’ve added &lt;code&gt;Fabric.with(this, new Crashlytics());&lt;/code&gt; will now be able to find the necessary libraries it needs to compile. Here’s a full listing of my build.gradle for reference.&lt;/p&gt;
 
 &lt;p&gt;Hope that this helps!&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;make&quot;&gt;&lt;span class=&quot;err&quot;&gt;buildscript&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-make&quot; data-lang=&quot;make&quot;&gt;&lt;span class=&quot;err&quot;&gt;buildscript&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;err&quot;&gt;repositories&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
         &lt;span class=&quot;err&quot;&gt;mavenCentral()&lt;/span&gt;
         &lt;span class=&quot;err&quot;&gt;jcenter()&lt;/span&gt;
-        &lt;span class=&quot;nf&quot;&gt;maven { url &amp;quot;https&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;//oss.sonatype.org/content/repositories/snapshots/&amp;quot; }&lt;/span&gt;
+        &lt;span class=&quot;nf&quot;&gt;maven { url &amp;quot;https&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;//&lt;span class=&quot;n&quot;&gt;oss&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;sonatype&lt;/span&gt;.&lt;span class=&quot;n&quot;&gt;org&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;content&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;repositories&lt;/span&gt;/&lt;span class=&quot;n&quot;&gt;snapshots&lt;/span&gt;/&amp;quot; }
         maven &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; url &lt;span class=&quot;s1&quot;&gt;&amp;#39;https://maven.fabric.io/public&amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
     dependencies &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
@@ -1100,7 +1320,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
 
 &lt;span class=&quot;err&quot;&gt;allprojects&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nf&quot;&gt;apply plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;&amp;quot;eclipse&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;nf&quot;&gt;apply plugin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &amp;quot;&lt;span class=&quot;n&quot;&gt;eclipse&lt;/span&gt;&amp;quot;
     apply plugin: &lt;span class=&quot;s2&quot;&gt;&amp;quot;idea&amp;quot;&lt;/span&gt;
 
     &lt;span class=&quot;nv&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.0&amp;#39;&lt;/span&gt;
@@ -1120,7 +1340,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
 
-&lt;span class=&quot;nf&quot;&gt;project(&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;android&amp;quot;) {&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;project(&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;android&lt;/span&gt;&amp;quot;) {
     apply plugin: &lt;span class=&quot;s2&quot;&gt;&amp;quot;android&amp;quot;&lt;/span&gt;
     apply plugin: &lt;span class=&quot;s1&quot;&gt;&amp;#39;io.fabric&amp;#39;&lt;/span&gt;
 
@@ -1153,7 +1373,7 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
 
-&lt;span class=&quot;nf&quot;&gt;project(&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;core&amp;quot;) {&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;project(&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;core&lt;/span&gt;&amp;quot;) {
     apply plugin: &lt;span class=&quot;s2&quot;&gt;&amp;quot;java&amp;quot;&lt;/span&gt;
 
 
@@ -1176,8 +1396,8 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 
 </description>
         <pubDate>Thu, 06 Aug 2015 11:14:00 -0400</pubDate>
-        <link>//miketraverso.github.io/2015/08/06/having-trouble-with-fabric-android-studio/</link>
-        <guid isPermaLink="true">//miketraverso.github.io/2015/08/06/having-trouble-with-fabric-android-studio/</guid>
+        <link>//traversoft.com/blog/2015/08/06/having-trouble-with-fabric-android-studio/</link>
+        <guid isPermaLink="true">//traversoft.com/blog/2015/08/06/having-trouble-with-fabric-android-studio/</guid>
       </item>
     
       <item>
@@ -1186,18 +1406,18 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/jeter-lines.png&quot; alt=&quot;UITableView with empty cells&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;just looks a bit off putting if you’re trying to show off your UI/UX skills. So how can we get rid of these empty cells? Well one way would be to add a UIView to your custom UITableViewCells, give it a background color and set it just at the bottom of your UITableViewCell. Then set the UITableViewCell separator property to None and call it a day. &lt;/p&gt;
+&lt;p&gt;just looks a bit off putting if you’re trying to show off your UI/UX skills. So how can we get rid of these empty cells? Well one way would be to add a UIView to your custom UITableViewCells, give it a background color and set it just at the bottom of your UITableViewCell. Then set the UITableViewCell separator property to None and call it a day.&lt;/p&gt;
 
-&lt;p&gt;I won’t go into why that’s such an absolutely awful idea, just so long as I’m able to hopefully convince you that it is and that there is a much easier and smarter way to get the results we want. So how exactly can we get rid of those cells?! For reference here’s a diagram of what the UITableView component looks like with all the bells and whistles. &lt;/p&gt;
+&lt;p&gt;I won’t go into why that’s such an absolutely awful idea, just so long as I’m able to hopefully convince you that it is and that there is a much easier and smarter way to get the results we want. So how exactly can we get rid of those cells?! For reference here’s a diagram of what the UITableView component looks like with all the bells and whistles.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/uitableview-components.png&quot; alt=&quot;UITableView UI components&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;We can see the table has two sections, each with two rows. We can also see the table’s header view and the table’s footer view. Most apps don’t bother with the table header and footer views but what would happen should we create a new UIView and assign that view to the table’s footer view? We can do that with the following code. Here we have the the IBOutlet for the table defined as &lt;code&gt;_resultsTable&lt;/code&gt;&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;objective-c&quot;&gt;&lt;span class=&quot;k&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;viewDidLoad&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;viewDidLoad&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     
-    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;super&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;viewDidLoad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;_resultsTable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tableFooterView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UIView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;super&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;viewDidLoad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_resultsTable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tableFooterView&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;UIView&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
     
     &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
@@ -1210,35 +1430,35 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 &lt;p&gt;Hope this helps!&lt;/p&gt;
 </description>
         <pubDate>Wed, 05 Aug 2015 11:14:00 -0400</pubDate>
-        <link>//miketraverso.github.io/2015/08/05/hide-empty-cells/</link>
-        <guid isPermaLink="true">//miketraverso.github.io/2015/08/05/hide-empty-cells/</guid>
+        <link>//traversoft.com/blog/2015/08/05/hide-empty-cells/</link>
+        <guid isPermaLink="true">//traversoft.com/blog/2015/08/05/hide-empty-cells/</guid>
       </item>
     
       <item>
         <title>How to determine nearby locations with trigonometry!</title>
         <description>&lt;p&gt;Lots of apps out there figure out how to determine locations near you. So just how exactly do we do that? Well SQLServer has some nice functionality baked right in. So does Android and iOS. What if you’re using mySQL and all you’ve got are latitudes and longitudes? How would you figure out which of those locations are near where you are?&lt;/p&gt;
 
-&lt;p&gt;Do you remember your high school trigonometry? Does the acronym &lt;code&gt;SOHCAHTOA&lt;/code&gt; make you cringe? If you’ve answered yes to either of these questions and have bad flashbacks or the urge to break out your TI-92 calculator don’t fret. If you’ve no idea what I’m talking about you must be one of the cool kids. Either way, we’re going to review some of the basics. &lt;/p&gt;
+&lt;p&gt;Do you remember your high school trigonometry? Does the acronym &lt;code&gt;SOHCAHTOA&lt;/code&gt; make you cringe? If you’ve answered yes to either of these questions and have bad flashbacks or the urge to break out your TI-92 calculator don’t fret. If you’ve no idea what I’m talking about you must be one of the cool kids. Either way, we’re going to review some of the basics.&lt;/p&gt;
 
 &lt;p&gt;&lt;code&gt;SOHCAHTOA&lt;/code&gt; is a mnemonic to help you remember your trigonometry. The following equations define the relationships between the sides and angles of triangles. We’re not going to give a complete trigonometry refresher here but this should jog your memory a little bit.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/angle.png&quot; alt=&quot;SOHCAHTOA Explained&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;matlab&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;θ&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opposite&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hypotenuse&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SOH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-matlab&quot; data-lang=&quot;matlab&quot;&gt;&lt;span class=&quot;nb&quot;&gt;sin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;θ&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opposite&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hypotenuse&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SOH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
  &lt;span class=&quot;nb&quot;&gt;cos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;θ&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;adjecent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hypotenuse&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CAH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
  &lt;span class=&quot;nb&quot;&gt;tan&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;θ&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opposite&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;adjecent&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TOA&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;Despite what some may believe the earth is round. Pictures taken from the Apollo program’s command module prove the earth is round… well ok to be technical it’s more like an oblate spheroid if we’re going to be precise. &lt;/p&gt;
+&lt;p&gt;Despite what some may believe the earth is round. Pictures taken from the Apollo program’s command module prove the earth is round… well ok to be technical it’s more like an oblate spheroid if we’re going to be precise.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/earth.jpg&quot; alt=&quot;Yep, the earth is round!&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;With that in mind we need to understand that there is a system by which any point on the surface of a round object, such as the Earth, can be found using a geographic coordinate system. This system uses a grid that’s laid over of the earth. This grid of imaginary lines, connect the north pole to the south pole or the top of the Earth to the bottom. These are called meridians and represent all 360 degrees ranging from -180 to 180 where 0 represents the prime meridian. The imaginary lines that circle around the earth are parallels. With the prime parallel located at the equator parallels in the southern hemisphere range from 0 degrees to -90 degrees and in the northern hemisphere range from 0 to 90 degrees. This coordinate system is what your car’s GPS uses to tell you where you are and help you get to where you’re going.&lt;/p&gt;
 
-&lt;p&gt;Longitude measures the meridians and latitude measures the parallels. With latitude and longitude you can determine any spot on the surface of the earth. With these being measure in degrees we can use some trigonometry to determine the distance between two points. There’s a super neat formula called the &lt;a href=&quot;http://www.movable-type.co.uk/scripts/latlong.html&quot;&gt;spherical law of cosines&lt;/a&gt;. &lt;/p&gt;
+&lt;p&gt;Longitude measures the meridians and latitude measures the parallels. With latitude and longitude you can determine any spot on the surface of the earth. With these being measure in degrees we can use some trigonometry to determine the distance between two points. There’s a super neat formula called the &lt;a href=&quot;http://www.movable-type.co.uk/scripts/latlong.html&quot;&gt;spherical law of cosines&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Given the following table where &lt;code&gt;LATITUDE&lt;/code&gt; and &lt;code&gt;LONGITUDE&lt;/code&gt; are columns that contain latitude and longitude coordinate data:&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LOCATIONS&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LOCATIONS&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;DESCRIPTION&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;varchar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;LATITUDE&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
@@ -1251,21 +1471,21 @@ Now we’re ready to start getting our app customized!&lt;/p&gt;
 
 &lt;p&gt;We can then use the following SQL statement to see all locations that are within 10 miles of &lt;code&gt;40.7484405,-73.9856644&lt;/code&gt;&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;java&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// RADIUS OF EARTH IN MILES is 3963.1676&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// RADIUS OF EARTH IN MILES is 3963.1676&lt;/span&gt;
 &lt;span class=&quot;c1&quot;&gt;// SEARCH RADIUS IN MILES is 10&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; 
 &lt;span class=&quot;n&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LOCATIONS&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ACOS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SIN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RADIANS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LATITUDE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SIN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RADIANS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;40.7484405&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; 
  &lt;span class=&quot;n&quot;&gt;COS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RADIANS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LATITUDE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;COS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RADIANS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;40.7484405&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;COS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RADIANS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;73.9856644&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RADIANS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;LONGITUDE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;3963.1676&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;And there you have it. This SQL Select statement would pull back all records from a locations table that are less than 10 miles from your latitude and longitude &lt;code&gt;40.7484405,-73.9856644&lt;/code&gt;. This could also be adapted for Excel spreadsheets or your own database table of location data. Just keep in mind that you’ll need to convert your latitude and longitude from degrees to radians and that the radius of the earth, in miles, is 3963.1676 miles. &lt;/p&gt;
+&lt;p&gt;And there you have it. This SQL Select statement would pull back all records from a locations table that are less than 10 miles from your latitude and longitude &lt;code&gt;40.7484405,-73.9856644&lt;/code&gt;. This could also be adapted for Excel spreadsheets or your own database table of location data. Just keep in mind that you’ll need to convert your latitude and longitude from degrees to radians and that the radius of the earth, in miles, is 3963.1676 miles.&lt;/p&gt;
 
 &lt;p&gt;Hope this helps!
 - Mike&lt;/p&gt;
 </description>
         <pubDate>Wed, 15 Jul 2015 18:46:00 -0400</pubDate>
-        <link>//miketraverso.github.io/2015/07/15/determine-nearby-locations/</link>
-        <guid isPermaLink="true">//miketraverso.github.io/2015/07/15/determine-nearby-locations/</guid>
+        <link>//traversoft.com/blog/2015/07/15/determine-nearby-locations/</link>
+        <guid isPermaLink="true">//traversoft.com/blog/2015/07/15/determine-nearby-locations/</guid>
       </item>
     
   </channel>
