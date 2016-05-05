@@ -164,12 +164,12 @@
 <p>With Butter Knife this:</p>
 
 <div class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">RecyclerView</span> <span class="n">listingsView</span> <span class="o">=</span> <span class="o">(</span><span class="n">RecyclerView</span><span class="o">)</span><span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">listings_view</span><span class="o">);</span>
-  <span class="n">Toolbar</span> <span class="n">toolbar</span> <span class="o">=</span> <span class="o">(</span><span class="n">Toolbar</span><span class="o">)</span><span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">toolbar</span><span class="o">);</span></code></pre></div>
+<span class="n">Toolbar</span> <span class="n">toolbar</span> <span class="o">=</span> <span class="o">(</span><span class="n">Toolbar</span><span class="o">)</span><span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">toolbar</span><span class="o">);</span></code></pre></div>
 
 <p>can become this:</p>
 
 <div class="highlight"><pre><code class="language-java" data-lang="java"><span class="nd">@BindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">listings_view</span><span class="o">)</span> <span class="n">RecyclerView</span> <span class="n">listingsView</span><span class="o">;</span>
-   <span class="nd">@BindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">toolbar</span><span class="o">)</span> <span class="n">Toolbar</span> <span class="n">toolbar</span><span class="o">;</span></code></pre></div>
+<span class="nd">@BindView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">toolbar</span><span class="o">)</span> <span class="n">Toolbar</span> <span class="n">toolbar</span><span class="o">;</span></code></pre></div>
 
 <p>That’s much simpler. This sets up the plumbing. Now we just make a call in our <strong>BakeryListingsActivity</strong>’s <code>onCreate</code> method  to actually have the Butter Knife library bind all the fields and methods we’ve annotated to their corresponding views in the layout. So far pretty easy.</p>
 

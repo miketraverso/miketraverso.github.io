@@ -41,38 +41,35 @@ Next we'll update our Project's build.gradle to include the
 
 ## **Simplify with Butter Knife...***
 
-  Butter Knife leverages annotations. For those of you not used to annotations, they're simply metadata on the fields, methods or classes they’re annotating. For example, if you've seen  `@Override` or `@SuppressWarning` you've seen annotations. With Butter Knife one of the more popular annotations that you'll be using is `@BindView`.
+Butter Knife leverages annotations. For those of you not used to annotations, they're simply metadata on the fields, methods or classes they’re annotating. For example, if you've seen  `@Override` or `@SuppressWarning` you've seen annotations. With Butter Knife one of the more popular annotations that you'll be using is `@BindView`.
 
-  This tutorial we'll be leveraging the **FaveBakes** project. The starting point for which can be found on GitHub and can be [downloaded here](https://github.com/miketraverso/ListViewToRecyclerView/tree/feature/replace-list-view). Here's a snippet of code from our project. As you can see this code is pretty busy doing stuff that has to be done in order for you to get to the fun stuff. This is a lot of ugly and all we're doing is getting fields set to their corresponding views from our layout.
+This tutorial we'll be leveraging the **FaveBakes** project. The starting point for which can be found on GitHub and can be [downloaded here](https://github.com/miketraverso/ListViewToRecyclerView/tree/feature/replace-list-view). Here's a snippet of code from our project. As you can see this code is pretty busy doing stuff that has to be done in order for you to get to the fun stuff. This is a lot of ugly and all we're doing is getting fields set to their corresponding views from our layout.
 
-  ![Before Butter Knife]({{ site.baseurl }}/blog/images/butterknife/before-butterknife.png){: .img-responsive .center-block }
+![Before Butter Knife]({{ site.baseurl }}/blog/images/butterknife/before-butterknife.png){: .img-responsive .center-block }
 
-  With Butter Knife this:
+With Butter Knife this:
 
-  {% highlight java %}
+{% highlight java %}
 
-  RecyclerView listingsView = (RecyclerView)findViewById(R.id.listings_view);
-  Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-  {% endhighlight %}
+RecyclerView listingsView = (RecyclerView)findViewById(R.id.listings_view);
+Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+{% endhighlight %}
 
-  can become this:
+can become this:
 
-  {% highlight java %}
-
-  @BindView(R.id.listings_view) RecyclerView listingsView;
-   @BindView(R.id.toolbar) Toolbar toolbar;
-  {% endhighlight %}
+{% highlight java %}
+@BindView(R.id.listings_view) RecyclerView listingsView;
+@BindView(R.id.toolbar) Toolbar toolbar;
+{% endhighlight %}
 
 That's much simpler. This sets up the plumbing. Now we just make a call in our **BakeryListingsActivity**'s `onCreate` method  to actually have the Butter Knife library bind all the fields and methods we've annotated to their corresponding views in the layout. So far pretty easy.
 
   ![Bind with Butter Knife]({{ site.baseurl }}/blog/images/butterknife/butterknife-bind.png){: .img-responsive .center-block }
 
-
 ## **ViewHolder & Fragments**
 What about ViewHolders and Fragments? Can Butter Knife handle them too? Yes. Yes it can. Earlier we took a look at an example of some ugly code. That was our BakeryHolder class, an extension of RecyclerView.ViewHolder. Below let's see what that code looks like with Butter Knife. As you'll notice, with the refactoring the constructor is much cleaner.
 
 {% highlight java %}
-
 public class BakeryHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     // 1. Define the bindings to the ViewHolder's views
@@ -116,7 +113,6 @@ public class BakeryHolder extends RecyclerView.ViewHolder implements View.OnClic
 Here's an example on how Butter Knife would be used with a `Fragment`. Notice the class scope `Unbinder` object. This is what calls to `ButterKnife.bind()` returns and allows you to call `unbind`. This is very useful for Fragments as `onDestroyView` may be called but the instance of the fragment is still present. `unbind` helps you keep things tidy. You can also call `unbind` from an Activity's `onDestroy()` too if you wanna be super clean.
 
 {% highlight java %}
-
 private Unbinder unbinder;
 
 @Override
