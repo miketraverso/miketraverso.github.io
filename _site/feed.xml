@@ -7,6 +7,68 @@
     <atom:link href="//traversoft.com/blog/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>DexIndexOverflowException: method ID not in [0, 0xffff]: 65536</title>
+        <description>&lt;h2 id=&quot;have-you-seen-this-before&quot;&gt;Have you seen this before?&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/blog/images/posts/multidex/error.png&quot; alt=&quot;DexIndexOverflowException&quot; class=&quot;img-responsive center-block&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Seeing the following error after including a big new library via a gradle can make you very very nervous. You see this error only when you try running your code, because hey, gradle says you didn’t have any errors so what gives?&lt;/p&gt;
+
+&lt;h2 id=&quot;whats-going-on&quot;&gt;What’s going on?&lt;/h2&gt;
+&lt;p&gt;Well, Android application files, or APKs, contain executable bytecode files. These byte code files exist in the form of a Dalvik Executable file (DEX). Dalvik should sound familiar because it’s mentioned in the first chapter of just about every book written on Android. It’s ok. Most people skip that chapter and jump right into creating your first Activity too. The Dalvik VM it is the virtual machine that runs your Java byte code. This is the simplest explanation I can give. For more information, check out &lt;a href=&quot;http://www.androidcentral.com/android-z-what-dalvik&quot;&gt;Android Central&lt;/a&gt; where they give a really in-depth explanation of what it is and how it works. For the purpose of our discussion what’s most important are these Dalvik Executable (DEX) files.&lt;/p&gt;
+
+&lt;h2 id=&quot;so-why-am-i-seeing-a-dexindexoverflowexception&quot;&gt;So why am I seeing a DexIndexOverflowException?&lt;/h2&gt;
+&lt;p&gt;See for some probably good reason the DEX file that is created for your app has a maximum number of methods that can exist within it. This number is… 65536. That should look familiar. If you’re not familiar with binary notation it’s the 0xffff at the end of the error that you’re seeing. What the error is telling you is that your DEX file has more methods defined than is allowed and you’re experiencing an overflow exception as you try to access a method that couldn’t fit in your DEX file.&lt;/p&gt;
+
+&lt;h2 id=&quot;xffff&quot;&gt;65536 == 256^2 == 0xffff&lt;/h2&gt;
+
+&lt;p&gt;So that’s the issue, how do we fix this? While not totally common, it happens often enough that Google has a library to help you fix this. The &lt;strong&gt;android.support.multidex.MultiDex&lt;/strong&gt; library “monkey patches” the application context class loader to load multiple DEX files and spread out your byte code across as many DEX files as your app needs. So instead of just having a classes.dex you’ll now also have a classes2.dex, classes3.dex, classes4.dex… You get the point. That said if you’ve got that many methods congratulations your code base is HUGE! Let’s take a look at how we can leverage this awesome library to allow us some multidex goodness.&lt;/p&gt;
+
+&lt;p&gt;First thing’s first. Open up the build.gradle file of your app, or the module causing the issue. This is going to include the multidex library into your app.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;dependencies&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;compile&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;android&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;support&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;multidex:&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The next step, in the same build.gradle file, update the defaultConfig section to include the following statement: multiDexEnabled true. With this step we are going to be enabled multidex for the app.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;defaultConfig&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;minSdkVersion&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;19&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;targetSdkVersion&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;multiDexEnabled&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now the next bit is going to actually leverage creating multidex for your app. If you’re not creating your own extension of the &lt;strong&gt;Application&lt;/strong&gt; then you will have to edit your &lt;strong&gt;AndroidManifest.xml&lt;/strong&gt; file like so. Setting the class name of the app’s Application to the MultiDexApplication class lets Android know that you’re going to depend on multiple DEX files, a primary DEX file (classes.dex) and supporting DEX files (classes2.dex, classes3.dex, etc.).&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;manifest&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns:android=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.android.com/apk/res/android&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;package=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;com.example.android.multidex.myapplication&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;application&lt;/span&gt;
+        &lt;span class=&quot;err&quot;&gt;...&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;android:name=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;android.support.multidex.MultiDexApplication&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+        ...
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/application&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/manifest&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;On the other hand, if you &lt;em&gt;are&lt;/em&gt; extending the &lt;strong&gt;Application&lt;/strong&gt; class in your app then you’re not going to be able to use the manifest solution. You’ll have to override the &lt;strong&gt;attachBaseContext()&lt;/strong&gt; method. If you’re already doing that, just make sure you make a call to &lt;strong&gt;MultiDex.install(this);&lt;/strong&gt;. Here’s the full listing:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;protected&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;attachBaseContext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Context&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;base&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;attachBaseContext&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;base&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;MultiDex&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;install&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;As always, I hope this helps. If you’ve got any questions reach out to me on &lt;a href=&quot;https://twitter.com/traversoft&quot;&gt;Twitter&lt;/a&gt;, &lt;a href=&quot;https://facebook.com/traversoft&quot;&gt;Facebook&lt;/a&gt; or in the comments below.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 22 Aug 2016 12:33:33 -0400</pubDate>
+        <link>//traversoft.com/blog/2016/08/22/multidex/</link>
+        <guid isPermaLink="true">//traversoft.com/blog/2016/08/22/multidex/</guid>
+      </item>
+    
+      <item>
         <title>Simplifying your Android code with Butter Knife</title>
         <description>&lt;p&gt;So if you’re an Android developer than you’ve used &lt;code&gt;findViewById&lt;/code&gt;. As an Android developer you’ve undoubtedly seen, and called, that method many times. It helps you access views contained in the layout files of your Activities or Fragments.&lt;/p&gt;
 
