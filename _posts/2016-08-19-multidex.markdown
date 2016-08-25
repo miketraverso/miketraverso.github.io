@@ -1,0 +1,72 @@
+---
+layout: post
+title:  "DexIndexOverflowException: method ID not in [0, 0xffff]: 65536"
+date:   2016-08-22 16:33:33
+description: 'DexIndexOverflowException: method ID not in [0, 0xffff]: 65536. What does this error mean? How can I fix this error? What is multidex? What is DexIndexOverflowException?'
+tags: android programming development
+thumbnail: /blog/images/posts/thumbnails/multidex.png
+---
+
+## Have you seen this before?
+
+![DexIndexOverflowException]({{ site.baseurl }}/blog/images/posts/multidex/error.png){: .img-responsive .center-block }
+
+Seeing the following error after including a big new library via a gradle can make you very very nervous. You see this error only when you try running your code, because hey, gradle says you didn't have any errors so what gives?
+
+## What's going on?
+Well, Android application files, or APKs, contain executable bytecode files. These byte code files exist in the form of a Dalvik Executable file (DEX). Dalvik should sound familiar because it's mentioned in the first chapter of just about every book written on Android. It's ok. Most people skip that chapter and jump right into creating your first Activity too. The Dalvik VM it is the virtual machine that runs your Java byte code. This is the simplest explanation I can give. For more information, check out [Android Central](http://www.androidcentral.com/android-z-what-dalvik) where they give a really in-depth explanation of what it is and how it works. For the purpose of our discussion what's most important are these Dalvik Executable (DEX) files.
+
+## So why am I seeing a DexIndexOverflowException?
+See for some probably good reason the DEX file that is created for your app has a maximum number of methods that can exist within it. This number is... 65536. That should look familiar. If you're not familiar with binary notation it's the 0xffff at the end of the error that you're seeing. What the error is telling you is that your DEX file has more methods defined than is allowed and you're experiencing an overflow exception as you try to access a method that couldn't fit in your DEX file.
+
+##65536 == 256^2 == 0xffff
+
+So that's the issue, how do we fix this? While not totally common, it happens often enough that Google has a library to help you fix this. The **android.support.multidex.MultiDex** library "monkey patches" the application context class loader to load multiple DEX files and spread out your byte code across as many DEX files as your app needs. So instead of just having a classes.dex you'll now also have a classes2.dex, classes3.dex, classes4.dex... You get the point. That said if you've got that many methods congratulations your code base is HUGE! Let's take a look at how we can leverage this awesome library to allow us some multidex goodness.
+
+First thing's first. Open up the build.gradle file of your app, or the module causing the issue. This is going to include the multidex library into your app.
+
+{% highlight java %}
+dependencies {
+  ...
+  compile 'com.android.support:multidex:1.0.0'
+}
+{% endhighlight %}
+
+The next step, in the same build.gradle file, update the defaultConfig section to include the following statement: multiDexEnabled true. With this step we are going to be enabled multidex for the app.
+
+{% highlight java %}
+defaultConfig {
+    ...
+    minSdkVersion 19
+    targetSdkVersion 24
+    ...
+    multiDexEnabled true
+}
+{% endhighlight %}
+
+Now the next bit is going to actually leverage creating multidex for your app. If you're not creating your own extension of the **Application** then you will have to edit your **AndroidManifest.xml** file like so. Setting the class name of the app's Application to the MultiDexApplication class lets Android know that you're going to depend on multiple DEX files, a primary DEX file (classes.dex) and supporting DEX files (classes2.dex, classes3.dex, etc.).
+
+{% highlight xml %}
+
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.android.multidex.myapplication">
+    <application
+        ...
+        android:name="android.support.multidex.MultiDexApplication">
+        ...
+    </application>
+</manifest>
+{% endhighlight %}
+
+On the other hand, if you *are* extending the **Application** class in your app then you're not going to be able to use the manifest solution. You'll have to override the **attachBaseContext()** method. If you're already doing that, just make sure you make a call to **MultiDex.install(this);**. Here's the full listing:
+
+{% highlight java %}
+@Override
+protected void attachBaseContext(Context base) {
+  super.attachBaseContext(base);
+  MultiDex.install(this);
+}
+{% endhighlight %}
+
+As always, I hope this helps. If you've got any questions reach out to me on [Twitter](https://twitter.com/traversoft), [Facebook](https://facebook.com/traversoft) or in the comments below.
