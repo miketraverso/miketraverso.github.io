@@ -5,16 +5,16 @@ date:   2015-08-06 15:14:00
 description: If you're having trouble getting the Fabric plugin to play nice with Android Studio this blog post will show you how to resolve those issues.
 # categories: blog geolocation geofencing latitude longitude
 tags: android UI UX libgdx programming developement gamedevelopment
-thumbnail: /images/android-studio.png
+thumbnail: /blog/images/android-studio.png
 ---
 
-Fabric, (www.fabric.io) is the new umbrella webapp from Twitter that incorporates all of Twitter's APIs. Fabric provides plugins for XCode, IntelliJ, Eclipse and Android Studio providing support for Crashlytics, Twitter, MoPub and Digits. It's extremely easy to get setup, most of the time that is, with it's walkthrough setup process. There are parts of the setup that either wait for you to do something and in most cases will actually update your files with the necessary code. No need to track down files, figure out where to make the change, make the change and hope for the best. 
+Fabric, (www.fabric.io) is the new umbrella webapp from Twitter that incorporates all of Twitter's APIs. Fabric provides plugins for XCode, IntelliJ, Eclipse and Android Studio providing support for Crashlytics, Twitter, MoPub and Digits. It's extremely easy to get setup, most of the time that is, with it's walkthrough setup process. There are parts of the setup that either wait for you to do something and in most cases will actually update your files with the necessary code. No need to track down files, figure out where to make the change, make the change and hope for the best.
 
 Today though I came across a bit of a problem getting Fabric and the Crashlytics API properly installed in my version of Android Studio. A bit of background on my situation. I've got an Android only, libgdx based, project running with the latest stable Android Studio (v1.3.0.10). LibGDX allows you to create projects that run cross platform. Web, iOS, Android, Windows, Mac... heck even Blackberry. One of the nasty results of this is that there are multiple projects with multiple `build.gradle` files. Which probably led to my issue :
 
 ![Android Studio with Gradle build error]({{ site.baseurl }}/images/gradle-error.png){: .img-responsive .center-block }
 
-Basically my AndroidLauncher.java, which is my app's entry point, where I am calling the Fabric setup methods, complained that it couldn't find teh Crashlyitcs and Fabric packages. Ruh-roh right? 
+Basically my AndroidLauncher.java, which is my app's entry point, where I am calling the Fabric setup methods, complained that it couldn't find teh Crashlyitcs and Fabric packages. Ruh-roh right?
 
 {% highlight java %}
 package com.traversoft.hff.android;
@@ -40,9 +40,7 @@ public class AndroidLauncher extends AndroidApplication {
 
 Something went wrong with the setup process. So let's check out our main build.gradle file.
 
-{% highlight basemake %}
-
-buildscript {
+<pre><code class="groovy">buildscript {
     repositories {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
@@ -116,13 +114,11 @@ project(":core") {
 
 tasks.eclipse.doLast {
     delete ".project"
-}
-{% endhighlight %}
+}</code></pre>
 
 So the problem here is that there is no mention anywhere to getting the necessary jars for a complete Fabric/Crashlytics installation. So let's go add it. First off we will need to add repositories and dependencies to the buildscript section of the build.gradle file
 
-{%highlight text%}
-buildscript {
+<pre><code class="groovy">buildscript {
     repositories {
         mavenCentral()
         jcenter()
@@ -133,13 +129,11 @@ buildscript {
         classpath 'com.android.tools.build:gradle:1.2.3'
         classpath 'io.fabric.tools:gradle:1.+'
     }
-}
-{%endhighlight%}
+}</code></pre>
 
 `jcenter()` refers to the new hotness that is a new maven repository for Android Studio's gradle plugin. [Check it out here](https://bintray.com/bintray/jcenter). Then we have the Fabric specific maven url. Under dependencies we see the Fabric classpath pointing to the latest version 1.+. Next we look to apply our Fabric plugin. In my case it's under `project(":android")` if you're just using a basic android app gradle.build this probably won't be within a `project` block and would just normally be under the `buildscript` section.     
 
-{%highlight text%}
-project(":android") {
+<pre><code class="groovy">project(":android") {
     apply plugin: "android"
     apply plugin: 'io.fabric'
 
@@ -151,22 +145,19 @@ project(":android") {
     }
 
 	...
-{%endhighlight%}
+</code></pre>
 
 Here we re adding our `apply plugin: 'io.fabric'` command and adding our repositories block. So that covers what Twitter covers in their manual setup [blog](http://docs.fabric.io/android/fabric/integration.html). If you sync up your gradle build now you should be all good to go... except you won't be. The Twitter blog fails to mention that you also need to add the following under your Android app's `dependencies` section.
 
-{%highlight text%}
-compile('com.crashlytics.sdk.android:crashlytics:2.2.3@aar') {
+<pre><code class="groovy">compile('com.crashlytics.sdk.android:crashlytics:2.2.3@aar') {
     transitive = true;
-} 
-{%endhighlight%}
+}</code></pre>
 
-We're specifying `transitive = true;` to get any dependencies that the crashlytics aar depends upon. (FYI: An AAR is the binary distribution of an Android Library Project, like an **A**ndroid **AR**chive). Once this is added we're all done and we'll notice if we gradle sync now our entry point class, or wherever you've added `Fabric.with(this, new Crashlytics());` will now be able to find the necessary libraries it needs to compile. Here's a full listing of my build.gradle for reference. 
+We're specifying `transitive = true;` to get any dependencies that the crashlytics aar depends upon. (FYI: An AAR is the binary distribution of an Android Library Project, like an **A**ndroid **AR**chive). Once this is added we're all done and we'll notice if we gradle sync now our entry point class, or wherever you've added `Fabric.with(this, new Crashlytics());` will now be able to find the necessary libraries it needs to compile. Here's a full listing of my build.gradle for reference.
 
 Hope that this helps!
 
-{%highlight make%}
-buildscript {
+<pre><code class="groovy">buildscript {
     repositories {
         mavenCentral()
         jcenter()
@@ -252,5 +243,4 @@ project(":core") {
 
 tasks.eclipse.doLast {
     delete ".project"
-}
-{%endhighlight%}
+}</code></pre>

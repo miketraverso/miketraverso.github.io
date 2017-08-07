@@ -5,14 +5,33 @@ html, body {
   width: 100%;
 }
 
-iframe {
-  width: 100%    !important;
-  height: auto   !important;
+.video {
+    display: block;
+    margin: auto;
+}
+
+.row {
+  margin-top: 10px;
+}
+
+.post-content blockquote {
+    opacity: 1;
+    font-style: normal;
+    background: beige;
+    /*font-family: 'Roboto Slab', serif;*/
+    font-family: Georgia,Cambria,"Times New Roman",Times,serif;
+    font-weight: 300;
+    letter-spacing: normal;
+    font-size: 21px;
 }
 
 .post-header {
     padding-top: 33px;
     color: #31849b;
+}
+
+.post-thumbnail {
+  margin-top: 1em;
 }
 
 .posts-home {
@@ -23,25 +42,40 @@ iframe {
 	font-size: 16px;
 }
 
+pre,
+pre code {
+    margin: 0;
+    padding: 0;
+}
+
 .thumbnail {
 	width: 200px;
 	height: auto;
 }
 
 .post-link {
-	font-family: "Verdana";
-	font face="verdana";
+  /*font-family: 'Roboto Slab', serif;*/
+  font-family: Georgia,Cambria,"Times New Roman",Times,serif;
+  font face="verdana";
   letter-spacing: 0em;
   color: #31849b;
 }
 
-.post-content {
-  font-family: 'Droid Serif', serif;
+.post-content,
+div.col-lg-9.col-md-8.col-sm-12.col-xs-12 > div > p {
+  /*font-family: 'Roboto Slab', serif;*/
+  font-family: Georgia,Cambria,"Times New Roman",Times,serif;
+  font-weight: 100;
+  font-size: 21px;
 }
 
 .post-content > h2 {
-  font-family: 'Droid Serif', serif;
   font-weight: bold;
+  line-height: 2;
+}
+
+.pagination {
+  font-size: x-large;
 }
 
 .custom-tag,
@@ -78,9 +112,15 @@ body > div > div > div > div > header > span > a:visited {
 
 .btn, .btn-default {
 	color: white;
-    background-color: rgba(213, 213, 213, 1);
-    font-family: "Verdana";
-    font-size: 14px;
+  background-color: #31849b;
+  font-size: 20px;
+  font-family: 'Roboto Slab', serif;
+  font-weight: 100;
+}
+
+.btn:hover, .btn-default:hover {
+  background-color: #215b6b;
+  color: white;
 }
 
 hr {
@@ -194,7 +234,7 @@ footer .glyphicon:hover {
 	outline: none;
 }
 
-.fa {
+.fa-custom {
 	font-size: 90px;
 	text-align: center;
 	top: 7px;

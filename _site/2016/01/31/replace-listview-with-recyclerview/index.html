@@ -13,15 +13,22 @@
     <title>Traversoft</title>
 
 <!-- 	    <title>Replacing ListView with RecyclerView</title> -->
-    <link rel="canonical" href="//traversoft.com/blog/2016/01/31/replace-listview-with-recyclerview/">
+    <link rel="canonical" href="http://localhost:4000/blog/2016/01/31/replace-listview-with-recyclerview/">
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" rel="stylesheet">
-    <link href='//fonts.googleapis.com/css?family=Droid+Serif:400,700' rel='stylesheet' type='text/css'>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/blog-styles.css">
-    <link href="/css/rrssb.css" rel="stylesheet" />
+    <link href='//fonts.googleapis.com/css?family=Droid+Serif' rel='stylesheet' type='text/css'>
+    <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Fira+Mono:400,700|Roboto+Slab:300,400" rel="stylesheet">
 
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/blog/css/main.css">
+    <link rel="stylesheet" href="/blog/css/blog-styles.css">
+    <link href="/blog/css/rrssb.css" rel="stylesheet" />
+
+    <!-- <link rel="stylesheet" href="/scripts/highlight/styles/darkula.css"> -->
+    <link rel="stylesheet" title="Atom One Dark" href=/blog/scripts/highlight/styles/atom-one-dark.css>
+    <script src='/blog/scripts/highlight/highlight.pack.js'></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 </head>
 
 
@@ -57,65 +64,69 @@
     <div class="container">
       <div class="row-fluid">
 	      <div class="col-sm-12">
-		  <div class="post">
+		      <div class="post">
 
   	<header class="post-header">
-	    <h1>Replacing ListView with RecyclerView</h1>
-
-	    <p class="meta">
-		    <span class="post-date"><i class="fa fa-small fa-clock-o"></i> 31 Jan 2016</span>
+      <img class="post-thumbnail thumbnail img-responsive center-block" src="/blog/images/favebakes-thumbnail.png">
+      <h1>Replacing ListView with RecyclerView</h1>
+	    <p class="post-date">
+		    <span class="post-date"><i class="fa fa-custom fa-small fa-clock-o"></i> 31 Jan 2016</span>
 		    
 		</p>
 
 		
-			<span class="label custom-tag"><a href="//traversoft.com/blog/tag/android">android</a></span>
+			<span class="label custom-tag"><a href="http://localhost:4000/tag/android">android</a></span>
 		
-			<span class="label custom-tag"><a href="//traversoft.com/blog/tag/programming">programming</a></span>
+			<span class="label custom-tag"><a href="http://localhost:4000/tag/programming">programming</a></span>
 		
-			<span class="label custom-tag"><a href="//traversoft.com/blog/tag/development">development</a></span>
+			<span class="label custom-tag"><a href="http://localhost:4000/tag/development">development</a></span>
 		
-			<span class="label custom-tag"><a href="//traversoft.com/blog/tag/UI">UI</a></span>
+			<span class="label custom-tag"><a href="http://localhost:4000/tag/UI">UI</a></span>
 		
-			<span class="label custom-tag"><a href="//traversoft.com/blog/tag/UX">UX</a></span>
+			<span class="label custom-tag"><a href="http://localhost:4000/tag/UX">UX</a></span>
 		
-			<span class="label custom-tag"><a href="//traversoft.com/blog/tag/materialdesign">materialdesign</a></span>
+			<span class="label custom-tag"><a href="http://localhost:4000/tag/materialdesign">materialdesign</a></span>
 		
-			<span class="label custom-tag"><a href="//traversoft.com/blog/tag/animation">animation</a></span>
+			<span class="label custom-tag"><a href="http://localhost:4000/tag/animation">animation</a></span>
 		
 
 		<p></p>
-		<div id="social">
-			<ul class="rrssb-buttons clearfix">
-				<li class="rrssb-facebook">
-		    		<a href="https://www.facebook.com/sharer/sharer.php?u=https://traversoft.com/blog/2016/01/31/replace-listview-with-recyclerview/" class="popup">
-					<span class="rrssb-icon">
-		        	<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" width="29" height="29" viewBox="0 0 29 29"><path d="M26.4 0H2.6C1.714 0 0 1.715 0 2.6v23.8c0 .884 1.715 2.6 2.6 2.6h12.393V17.988h-3.996v-3.98h3.997v-3.062c0-3.746 2.835-5.97 6.177-5.97 1.6 0 2.444.173 2.845.226v3.792H21.18c-1.817 0-2.156.9-2.156 2.168v2.847h5.045l-.66 3.978h-4.386V29H26.4c.884 0 2.6-1.716 2.6-2.6V2.6c0-.885-1.716-2.6-2.6-2.6z" class="cls-2" fill-rule="evenodd"/></svg>
-					</span>
-					</a>
-			</li>
-		    <li class="rrssb-twitter">
-		        <a href="https://twitter.com/intent/tweet?text=Replacing ListView with RecyclerView%20https://traversoft.com/blog/2016/01/31/replace-listview-with-recyclerview/" class="popup">
-		        <span class="rrssb-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path d="M24.253 8.756C24.69 17.08 18.297 24.182 9.97 24.62c-3.122.162-6.22-.646-8.86-2.32 2.702.18 5.375-.648 7.507-2.32-2.072-.248-3.818-1.662-4.49-3.64.802.13 1.62.077 2.4-.154-2.482-.466-4.312-2.586-4.412-5.11.688.276 1.426.408 2.168.387-2.135-1.65-2.73-4.62-1.394-6.965C5.574 7.816 9.54 9.84 13.802 10.07c-.842-2.738.694-5.64 3.434-6.48 2.018-.624 4.212.043 5.546 1.682 1.186-.213 2.318-.662 3.33-1.317-.386 1.256-1.248 2.312-2.4 2.942 1.048-.106 2.07-.394 3.02-.85-.458 1.182-1.343 2.15-2.48 2.71z"/></svg></span>
-		        </a>
-		    </li>
-		    <li class="rrssb-linkedin" data-initwidth="14.285714285714286" data-size="54" style="width: 14.2857%;">
-	          <!-- Replace href with your meta and URL information -->
-	          <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=https://traversoft.com/blog/2016/01/31/replace-listview-with-recyclerview/&amp;title=Replacing ListView with RecyclerView&amp;summary=So if you’ve ever written an Android app, chances are that you’ve used a ListView. If you’re new to Android development, ListView is a common...%20by%20Traversoft%20Software" class="popup">
-	            <span class="rrssb-icon">
-	              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
-	                <path d="M25.424 15.887v8.447h-4.896v-7.882c0-1.98-.71-3.33-2.48-3.33-1.354 0-2.158.91-2.514 1.802-.13.315-.162.753-.162 1.194v8.216h-4.9s.067-13.35 0-14.73h4.9v2.087c-.01.017-.023.033-.033.05h.032v-.05c.65-1.002 1.812-2.435 4.414-2.435 3.222 0 5.638 2.106 5.638 6.632zM5.348 2.5c-1.676 0-2.772 1.093-2.772 2.54 0 1.42 1.066 2.538 2.717 2.546h.032c1.71 0 2.77-1.132 2.77-2.546C8.056 3.593 7.02 2.5 5.344 2.5h.005zm-2.48 21.834h4.896V9.604H2.867v14.73z"></path>
-	              </svg>
-	            </span>
-	          </a>
-	        </li>
-	        <li class="rrssb-email">
-		    	<a href="mailto:?subject=Replacing ListView with RecyclerView&amp;body=So if you’ve ever written an Android app, chances are that you’ve used a ListView. If you’re new to Android development, ListView is a common...%20by%20Traversoft%20Software.%20Read%20more%20here:%20https://traversoft.com/blog/2016/01/31/replace-listview-with-recyclerview/">
-						<span class="rrssb-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path d="M20.11 26.147c-2.335 1.05-4.36 1.4-7.124 1.4C6.524 27.548.84 22.916.84 15.284.84 7.343 6.602.45 15.4.45c6.854 0 11.8 4.7 11.8 11.252 0 5.684-3.193 9.265-7.398 9.3-1.83 0-3.153-.934-3.347-2.997h-.077c-1.208 1.986-2.96 2.997-5.023 2.997-2.532 0-4.36-1.868-4.36-5.062 0-4.75 3.503-9.07 9.11-9.07 1.713 0 3.7.4 4.6.972l-1.17 7.203c-.387 2.298-.115 3.3 1 3.4 1.674 0 3.774-2.102 3.774-6.58 0-5.06-3.27-8.994-9.304-8.994C9.05 2.87 3.83 7.545 3.83 14.97c0 6.5 4.2 10.2 10 10.202 1.987 0 4.09-.43 5.647-1.245l.634 2.22zM16.647 10.1c-.31-.078-.7-.155-1.207-.155-2.572 0-4.596 2.53-4.596 5.53 0 1.5.7 2.4 1.9 2.4 1.44 0 2.96-1.83 3.31-4.088l.592-3.72z"/></svg></span>
-					</a>
-				</li>
-			</ul>
-		</div>
 
+    <div class="row">
+      <div id="social" class="col-sm-6 col-md-6 col-lg-6 col-xs-8">
+  		<!-- <div id="social" style="width: 50%;"> -->
+  			<ul class="rrssb-buttons clearfix">
+  				<li class="rrssb-facebook">
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http:http://localhost:4000/blog" class="popup">
+  					<span class="rrssb-icon">
+  		        	<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" width="29" height="29" viewBox="0 0 29 29"><path d="M26.4 0H2.6C1.714 0 0 1.715 0 2.6v23.8c0 .884 1.715 2.6 2.6 2.6h12.393V17.988h-3.996v-3.98h3.997v-3.062c0-3.746 2.835-5.97 6.177-5.97 1.6 0 2.444.173 2.845.226v3.792H21.18c-1.817 0-2.156.9-2.156 2.168v2.847h5.045l-.66 3.978h-4.386V29H26.4c.884 0 2.6-1.716 2.6-2.6V2.6c0-.885-1.716-2.6-2.6-2.6z" class="cls-2" fill-rule="evenodd"/></svg>
+  					</span>
+  					</a>
+  			</li>
+  		    <li class="rrssb-twitter">
+  		        <a href="https://twitter.com/intent/tweet?text=Replacing ListView with RecyclerView%20https:http://localhost:4000/blog/2016/01/31/replace-listview-with-recyclerview/" class="popup">
+  		        <span class="rrssb-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path d="M24.253 8.756C24.69 17.08 18.297 24.182 9.97 24.62c-3.122.162-6.22-.646-8.86-2.32 2.702.18 5.375-.648 7.507-2.32-2.072-.248-3.818-1.662-4.49-3.64.802.13 1.62.077 2.4-.154-2.482-.466-4.312-2.586-4.412-5.11.688.276 1.426.408 2.168.387-2.135-1.65-2.73-4.62-1.394-6.965C5.574 7.816 9.54 9.84 13.802 10.07c-.842-2.738.694-5.64 3.434-6.48 2.018-.624 4.212.043 5.546 1.682 1.186-.213 2.318-.662 3.33-1.317-.386 1.256-1.248 2.312-2.4 2.942 1.048-.106 2.07-.394 3.02-.85-.458 1.182-1.343 2.15-2.48 2.71z"/></svg></span>
+  		        </a>
+  		    </li>
+  		    <li class="rrssb-linkedin" data-initwidth="14.285714285714286" data-size="54" style="width: 14.2857%;">
+  	          <!-- Replace href with your meta and URL information -->
+  	          <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=https:http://localhost:4000/blog/2016/01/31/replace-listview-with-recyclerview/&amp;title=Replacing ListView with RecyclerView&amp;summary=So if you’ve ever written an Android app, chances are that you’ve used a ListView. If you’re new to Android development, ListView is a common...%20by%20Traversoft%20Software" class="popup">
+  	            <span class="rrssb-icon">
+  	              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+  	                <path d="M25.424 15.887v8.447h-4.896v-7.882c0-1.98-.71-3.33-2.48-3.33-1.354 0-2.158.91-2.514 1.802-.13.315-.162.753-.162 1.194v8.216h-4.9s.067-13.35 0-14.73h4.9v2.087c-.01.017-.023.033-.033.05h.032v-.05c.65-1.002 1.812-2.435 4.414-2.435 3.222 0 5.638 2.106 5.638 6.632zM5.348 2.5c-1.676 0-2.772 1.093-2.772 2.54 0 1.42 1.066 2.538 2.717 2.546h.032c1.71 0 2.77-1.132 2.77-2.546C8.056 3.593 7.02 2.5 5.344 2.5h.005zm-2.48 21.834h4.896V9.604H2.867v14.73z"></path>
+  	              </svg>
+  	            </span>
+  	          </a>
+  	        </li>
+  	        <li class="rrssb-email">
+              <a href="mailto:?subject=&amp;body=Check out this blog article from traversoft.com/blog:%0A%0A%0A
+  						%0A%0Ahttps:http://localhost:4000/blog">
+  							<span class="rrssb-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path d="M20.11 26.147c-2.335 1.05-4.36 1.4-7.124 1.4C6.524 27.548.84 22.916.84 15.284.84 7.343 6.602.45 15.4.45c6.854 0 11.8 4.7 11.8 11.252 0 5.684-3.193 9.265-7.398 9.3-1.83 0-3.153-.934-3.347-2.997h-.077c-1.208 1.986-2.96 2.997-5.023 2.997-2.532 0-4.36-1.868-4.36-5.062 0-4.75 3.503-9.07 9.11-9.07 1.713 0 3.7.4 4.6.972l-1.17 7.203c-.387 2.298-.115 3.3 1 3.4 1.674 0 3.774-2.102 3.774-6.58 0-5.06-3.27-8.994-9.304-8.994C9.05 2.87 3.83 7.545 3.83 14.97c0 6.5 4.2 10.2 10 10.202 1.987 0 4.09-.43 5.647-1.245l.634 2.22zM16.647 10.1c-.31-.078-.7-.155-1.207-.155-2.572 0-4.596 2.53-4.596 5.53 0 1.5.7 2.4 1.9 2.4 1.44 0 2.96-1.83 3.31-4.088l.592-3.72z"/></svg></span>
+  					</a>
+  				</li>
+  			</ul>
+  		</div>
+    </div>
 	</header>
 
 	<article class="post-content">
@@ -128,7 +139,7 @@
 <h2 id="an-introduction-to-fave-bakes"><strong>An introduction to Fave Bakes</strong></h2>
 <p>Our existing app displays a list of favorite bakeries in the area. The bakery name, phone number, address, website and logo appear to the user and allow them to peruse a number of local bakeries.  So let’s take a look at our <code>Bakery</code> model.</p>
 
-<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Bakery</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Bakery</span> <span class="o">{</span>
 
     <span class="kd">public</span> <span class="n">String</span> <span class="n">bakeryName</span><span class="o">;</span>
     <span class="kd">public</span> <span class="n">String</span> <span class="n">description</span><span class="o">;</span>
@@ -149,11 +160,11 @@
         <span class="k">this</span><span class="o">.</span><span class="na">phoneNumber</span> <span class="o">=</span> <span class="n">phoneNumber</span><span class="o">;</span>
         <span class="k">this</span><span class="o">.</span><span class="na">websiteUrl</span> <span class="o">=</span> <span class="n">websiteUrl</span><span class="o">;</span>
     <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>While not a true POJO we just wanted something simple for our scenario. We load all the bakery data into this model so that we can display it in a ListView. So far pretty straightforward. Speaking of which, here’s our activity layout:</p>
 
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 
 <span class="nt">&lt;RelativeLayout</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
     <span class="na">xmlns:app=</span><span class="s">&quot;http://schemas.android.com/apk/res-auto&quot;</span>
@@ -176,13 +187,13 @@
         android:background=&quot;@color/lightGray&quot;&gt;
     <span class="nt">&lt;/ListView&gt;</span>
 
-<span class="nt">&lt;/RelativeLayout&gt;</span></code></pre></div>
+<span class="nt">&lt;/RelativeLayout&gt;</span></code></pre></figure>
 
 <p>In <strong>FaveBakes</strong> we’re dealing with a very simple activity that just has a <code>ListView</code> that takes up the screen, sets the background color and adds a padding to the top and bottom, left and right. Our list item view for each item of the <code>ListView</code> is a bit more complicated. It displays the bakery image to the left of the bakery name, address, phone number, website and underneath all of that is a description of the bakery. Here’s what our <strong>list_item_bakery.xml</strong> looks like and the layout xml that creates it.</p>
 
 <p><img src="/blog/images/bakery_item.png" alt="Sample Bakery Item Layout" class="img-responsive center-block" /></p>
 
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 <span class="nt">&lt;LinearLayout</span>
     <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
           <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span>
@@ -253,7 +264,7 @@
 
     <span class="nt">&lt;/RelativeLayout&gt;</span>
 
-<span class="nt">&lt;/LinearLayout&gt;</span></code></pre></div>
+<span class="nt">&lt;/LinearLayout&gt;</span></code></pre></figure>
 
 <p>The next part of our existing app that we’ll look at is the Adapter. This app uses an ArrayAdapter of Bakery items to fill the ListView with the details of the individual Bakery objects. Our constructor takes in</p>
 
@@ -265,7 +276,7 @@
 
 <p>We override the <code>public View getView</code> method to display our bakery information in each item of the ListView. (2) First we are going to see if we’ve already inflated the layout of the item. Inflating Android layouts is a resource intensive activity so if we’ve already done it before we don’t need to do it again. Simply we can reuse what we have already inflated and just change the values. (3) We get the bakery we want to display by looking up the position in the list of Bakery objects we passed in. (4) Then we use the Bakery object at that position to set the data for the view. (5) Finally, we return the fully configured View.</p>
 
-<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BakeryAdapter</span> <span class="kd">extends</span> <span class="n">ArrayAdapter</span><span class="o">&lt;</span><span class="n">Bakery</span><span class="o">&gt;</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BakeryAdapter</span> <span class="kd">extends</span> <span class="n">ArrayAdapter</span><span class="o">&lt;</span><span class="n">Bakery</span><span class="o">&gt;</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Bakery</span><span class="o">&gt;</span> <span class="n">bakeries</span><span class="o">;</span>
     <span class="kd">private</span> <span class="n">Context</span> <span class="n">context</span><span class="o">;</span>
@@ -320,11 +331,11 @@
 
         <span class="k">return</span> <span class="n">itemView</span><span class="o">;</span>
     <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p>Now it’s time to take a look at our Activity code to see how the ArrayAdapter<bakery> is tied to the ListView we saw in our layout file earlier. In our `onCreate` method we (1) inflate our activity and (2) load up our bakery data. (3) We then instantiate our `BakeryAdapter` that we just looked at, passing in the activity (for Context), the resource ID of the layout of the item we want to use, and the `List<bakery>` we want to display. (4) Next, inflating our ListView allows us to set the adapter on it so that our ListView knows what data, and how, to display.</bakery></bakery></p>
+<p>Now it’s time to take a look at our Activity code to see how the ArrayAdapter<Bakery> is tied to the ListView we saw in our layout file earlier. In our `onCreate` method we (1) inflate our activity and (2) load up our bakery data. (3) We then instantiate our `BakeryAdapter` that we just looked at, passing in the activity (for Context), the resource ID of the layout of the item we want to use, and the `List<Bakery>` we want to display. (4) Next, inflating our ListView allows us to set the adapter on it so that our ListView knows what data, and how, to display.</Bakery></Bakery></p>
 
-<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BakeryListingsActivity</span> <span class="kd">extends</span> <span class="n">AppCompatActivity</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BakeryListingsActivity</span> <span class="kd">extends</span> <span class="n">AppCompatActivity</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="n">ListView</span> <span class="n">listingsView</span><span class="o">;</span>
     <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Bakery</span><span class="o">&gt;</span> <span class="n">bakeries</span><span class="o">;</span>
@@ -341,7 +352,7 @@
         <span class="n">loadBakeries</span><span class="o">();</span>
 
         <span class="c1">// 3. Initialize the Bakery adapter</span>
-        <span class="n">BakeryAdapter</span> <span class="n">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">BakeryAdapter</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">list_item_bakery</span><span class="o">,</span> <span class="n">bakeries</span><span class="o">);</span>
+        <span class="n">BakeryAdapter</span> <span class="n">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BakeryAdapter</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">list_item_bakery</span><span class="o">,</span> <span class="n">bakeries</span><span class="o">);</span>
 
         <span class="c1">// 4. Inflate our ListView and set the adapter on it</span>
         <span class="n">listingsView</span> <span class="o">=</span> <span class="o">(</span><span class="n">ListView</span><span class="o">)</span><span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">listings_view</span><span class="o">);</span>
@@ -371,7 +382,7 @@
 
     <span class="c1">// Sets the app title to use a custom font</span>
     <span class="kd">private</span> <span class="kt">void</span> <span class="nf">setupActionBarTheme</span><span class="o">()</span> <span class="o">{...}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>So that’s basically it. Here’s a GIF showing what the app looks like once launched. For a complete listing of this project go ahead and check out <a href="https://github.com/miketraverso/ListViewToRecyclerView">the master and feature branch</a> on GitHub.</p>
 
@@ -439,7 +450,7 @@ If you need help doing this, in Android Studio find the <strong>build.gradle</st
 
 <p>We keep the id the same so that we don’t have to change that in our code, width, height and background all also stay the same.</p>
 
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 
 <span class="nt">&lt;RelativeLayout</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
     <span class="na">xmlns:app=</span><span class="s">&quot;http://schemas.android.com/apk/res-auto&quot;</span>
@@ -462,11 +473,11 @@ If you need help doing this, in Android Studio find the <strong>build.gradle</st
         <span class="na">android:background=</span><span class="s">&quot;@color/lightGray&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;/android.support.v7.widget.RecyclerView&gt;</span>
 
-<span class="nt">&lt;/RelativeLayout&gt;</span></code></pre></div>
+<span class="nt">&lt;/RelativeLayout&gt;</span></code></pre></figure>
 
 <p>Now let’s go back to look at our adapter. Before we can though we need to implement a ViewHolder. Remember from earlier, the ViewHolder helps the Adapter bind data to the item views. Our holder is going to extend RecyclerView.ViewHolder while implementing the View.OnClickListener interface. (1) Our constructor will take a Context and a View. (2) We’ll access our item UI widgets here so we define all of our TextView’s and our ImageView as we did in our ArrayAdapter. We’re basically moving that into our <code>BakeryHolder</code>. The ViewHolder knows about the Bakery it’s bound to so no need to look up other views, figure out the position clicked and look up the bakery tied to that position. (3) Binding is something we need the BakeryHolder to do so we’ll go ahead and create a method called <code>bindBakery</code> that takes in a Bakery object and sets the values of the UI widgets. (5) Lastly, we migrate our <code>onClick</code> implementation into our BakeryHolder. This makes a bit more sense than having it on the ListView.</p>
 
-<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BakeryHolder</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="kd">implements</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BakeryHolder</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ViewHolder</span> <span class="kd">implements</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kd">final</span> <span class="n">ImageView</span> <span class="n">bakeryLogo</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">final</span> <span class="n">TextView</span> <span class="n">bakeryName</span><span class="o">;</span>
@@ -518,9 +529,9 @@ If you need help doing this, in Android Studio find the <strong>build.gradle</st
             <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">context</span><span class="o">,</span> <span class="s">&quot;Clicked on &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">bakery</span><span class="o">.</span><span class="na">bakeryName</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span> <span class="o">).</span><span class="na">show</span><span class="o">();</span>
         <span class="o">}</span>
     <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
-<p>Our adapter can now leverage our new BakeryHolder class. In BakeryAdapter, our constructor remains the same as it was before. However, now we extend the RecyclerView.Adapter<bakeryholder> instead of ArrayAdapter<bakery>. As such we'll want to override 3 methods:</bakery></bakeryholder></p>
+<p>Our adapter can now leverage our new BakeryHolder class. In BakeryAdapter, our constructor remains the same as it was before. However, now we extend the RecyclerView.Adapter<BakeryHolder> instead of ArrayAdapter<Bakery>. As such we'll want to override 3 methods:</Bakery></BakeryHolder></p>
 
 <ul>
   <li>public BakeryHolder onCreateViewHolder(ViewGroup parent, int viewType)</li>
@@ -532,7 +543,7 @@ If you need help doing this, in Android Studio find the <strong>build.gradle</st
 
 <p>In onBindViewHolder, we (5) access the bakery at the proper position and bind it to the ViewHolder. This is where that “magic” happens that tells an item at a particular position which data to display. Finally we override the getItemCount and return the number of items in our data set.</p>
 
-<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BakeryAdapter</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span><span class="o">&lt;</span><span class="n">BakeryHolder</span><span class="o">&gt;</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BakeryAdapter</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span><span class="o">&lt;</span><span class="n">BakeryHolder</span><span class="o">&gt;</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Bakery</span><span class="o">&gt;</span> <span class="n">bakeries</span><span class="o">;</span>
     <span class="kd">private</span> <span class="n">Context</span> <span class="n">context</span><span class="o">;</span>
@@ -553,7 +564,7 @@ If you need help doing this, in Android Studio find the <strong>build.gradle</st
         <span class="c1">// 3. Inflate the view and return the new ViewHolder</span>
         <span class="n">View</span> <span class="n">view</span> <span class="o">=</span> <span class="n">LayoutInflater</span><span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="n">parent</span><span class="o">.</span><span class="na">getContext</span><span class="o">())</span>
                                   <span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">itemResource</span><span class="o">,</span> <span class="n">parent</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nf">BakeryHolder</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">context</span><span class="o">,</span> <span class="n">view</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">BakeryHolder</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">context</span><span class="o">,</span> <span class="n">view</span><span class="o">);</span>
     <span class="o">}</span>
 
     <span class="c1">// 4. Override the onBindViewHolder method</span>
@@ -572,12 +583,12 @@ If you need help doing this, in Android Studio find the <strong>build.gradle</st
 
         <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="na">bakeries</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
     <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>With our Adapter updated and ViewHolder created we can update our Activity. Our adapter constructor doesn’t change. It still takes a Context, the resource id of the item layout and the data set. (5) We change the type of the listingsView from ListView to RecyclerView. (6) Seeing as our RecyclerView doesn’t change height or width within FaveBakes, we can tell <code>listingsView</code> that it has a fixed size. This is for performance reasons. If your app requires the RecyclerView to change size don’t do this. (9) We now continue to set the adapter of our RecyclerView. Nothing changes here either.</p>
 
-<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">// 3. Initialize the Bakery adapter... unchanged.</span>
-<span class="n">BakeryAdapter</span> <span class="n">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">BakeryAdapter</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">list_item_bakery</span><span class="o">,</span> <span class="n">bakeries</span><span class="o">);</span>
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="c1">// 3. Initialize the Bakery adapter... unchanged.</span>
+<span class="n">BakeryAdapter</span> <span class="n">adapter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BakeryAdapter</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">list_item_bakery</span><span class="o">,</span> <span class="n">bakeries</span><span class="o">);</span>
 
 <span class="c1">// 4. Initialize ItemAnimator, LayoutManager and ItemDecorators</span>
 
@@ -592,7 +603,7 @@ If you need help doing this, in Android Studio find the <strong>build.gradle</st
 <span class="c1">// 8. Set the ItemDecorators</span>
 
 <span class="c1">// 9. Attach the adapter to RecyclerView</span>
-<span class="n">listingsView</span><span class="o">.</span><span class="na">setAdapter</span><span class="o">(</span><span class="n">adapter</span><span class="o">);</span></code></pre></div>
+<span class="n">listingsView</span><span class="o">.</span><span class="na">setAdapter</span><span class="o">(</span><span class="n">adapter</span><span class="o">);</span></code></pre></figure>
 
 <h2 id="now-the-extra-recyclerview-bits"><strong>Now the extra RecyclerView bits</strong></h2>
 <p>Just a few more things to take care of. Namely, we have to setup a LayoutManager. We’ll be setting up ItemDecorators and an ItemAnimator but those are optional for you to setup. Let’s create an instance of a RecyclerView.LayoutManager. As this is an abstract class we will need to implement one of those layout managers we reviewed earlier. In this case as we want to closely replicate the ListView we will use a <code>LinearLayoutManager</code>.</p>
@@ -601,7 +612,7 @@ If you need help doing this, in Android Studio find the <strong>build.gradle</st
 
 <p>For instance, to create your own custom ItemDecorator we’ll extend the  <code>RecyclerView.ItemDecoration</code> class. For adding in some vertical spacing, we override the <code>getItemOffsets</code> method. The <code>outRect</code> parameter that gets passed in lets you access the <code>Rect</code> that the item will take up with no padding. (2) Setting the value of the bottom field on <code>outRect</code> to a value will create an <strong>offset</strong> to that side of the rectangle representing the item. What we do in the VerticalSpaceItemDecorator is check to make sure that the item we’re looking at isn’t the last item in the collection. No need to add a bottom padding to the last item. We could have acheived the same result by adding an offset value to the top field of <code>outRect</code> and not adding that padding to the first item in the collection.</p>
 
-<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">VerticalSpaceItemDecorator</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ItemDecoration</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">VerticalSpaceItemDecorator</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ItemDecoration</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">verticalSpaceHeight</span><span class="o">;</span>
 
@@ -623,20 +634,20 @@ If you need help doing this, in Android Studio find the <strong>build.gradle</st
             <span class="n">outRect</span><span class="o">.</span><span class="na">bottom</span> <span class="o">=</span> <span class="n">verticalSpaceHeight</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>With a drop shadow, we’ll first create a new drawable and name it <strong>drop_shadow.xml</strong>. Then we’ll create a shape, with a size and color as seen below.</p>
 
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<figure class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
 <span class="nt">&lt;shape</span> <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
     <span class="na">android:shape=</span><span class="s">&quot;rectangle&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;size</span> <span class="na">android:height=</span><span class="s">&quot;4dp&quot;</span> <span class="nt">/&gt;</span>
     <span class="nt">&lt;solid</span> <span class="na">android:color=</span><span class="s">&quot;@color/gray&quot;</span> <span class="nt">/&gt;</span>
-<span class="nt">&lt;/shape&gt;</span></code></pre></div>
+<span class="nt">&lt;/shape&gt;</span></code></pre></figure>
 
 <p>Then we’ll again extend RecyclerView.ItemDecoration in a new class. In our constructor we load the drawable resource we just created. Then in the onDraw mehod that we will override, we’ll make sure we set the drop shadow rectangle to (1) be the same width as the RecyclerView and (2 &amp; 3) iterate through each item to (4) determine the top and bottom constraints of where the drop shadow should be drawn. (5) Once we have the bounds of the drawable for the drop shadow we (6) draw it to the canvas.</p>
 
-<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShadowVerticalSpaceItemDecorator</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ItemDecoration</span> <span class="o">{</span>
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShadowVerticalSpaceItemDecorator</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">ItemDecoration</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="n">Drawable</span> <span class="n">divider</span><span class="o">;</span>
 
@@ -671,20 +682,20 @@ If you need help doing this, in Android Studio find the <strong>build.gradle</st
             <span class="k">this</span><span class="o">.</span><span class="na">divider</span><span class="o">.</span><span class="na">draw</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">}</span>
-<span class="o">}</span></code></pre></div>
+<span class="o">}</span></code></pre></figure>
 
 <p>So that’s it, we’ve create two item decorators for our RecyclerView. Now it’s time to add them onto our RecyclerView so that we get the desired effect. Let’s look back to our Activity code. First we create an instance of RecyclerView.LayoutManager and instantiate it as a <code>LinearLayoutManager</code>. This gives us that same vertical <code>ListView</code> like look and feel.</p>
 
 <p>Next we define a spacing for how far apart we want our list items to appear. In our case 20. We pass that into the VerticalSpaceItemDecorator constructor we created earlier. Then lastly we’ll create an instance of a ShadowVerticalSpaceItemDecorator passing in the activity as the context and the resource of the drop_shadow drawable. To wrap everything up we’ll (7) set the layoutManager of the RecyclerView and (8) add the item decorators to the RecyclerView. Here we make two calls to the <code>addItemDecoration</code> method on the RecyclerView instance. First we add the shadow and then the vertical spacing decoration.</p>
 
-<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">// 4. Initialize ItemAnimator, LayoutManager and ItemDecorators</span>
-<span class="n">RecyclerView</span><span class="o">.</span><span class="na">LayoutManager</span> <span class="n">layoutManager</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">LinearLayoutManager</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="c1">// 4. Initialize ItemAnimator, LayoutManager and ItemDecorators</span>
+<span class="n">RecyclerView</span><span class="o">.</span><span class="na">LayoutManager</span> <span class="n">layoutManager</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LinearLayoutManager</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
 
 <span class="kt">int</span> <span class="n">verticalSpacing</span> <span class="o">=</span> <span class="mi">20</span><span class="o">;</span>
 <span class="n">VerticalSpaceItemDecorator</span> <span class="n">itemDecorator</span> <span class="o">=</span>
-  <span class="k">new</span> <span class="nf">VerticalSpaceItemDecorator</span><span class="o">(</span><span class="n">verticalSpacing</span><span class="o">);</span>
+  <span class="k">new</span> <span class="n">VerticalSpaceItemDecorator</span><span class="o">(</span><span class="n">verticalSpacing</span><span class="o">);</span>
 <span class="n">ShadowVerticalSpaceItemDecorator</span> <span class="n">shadowItemDecorator</span> <span class="o">=</span>
-  <span class="k">new</span> <span class="nf">ShadowVerticalSpaceItemDecorator</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">drawable</span><span class="o">.</span><span class="na">drop_shadow</span><span class="o">);</span>
+  <span class="k">new</span> <span class="n">ShadowVerticalSpaceItemDecorator</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">drawable</span><span class="o">.</span><span class="na">drop_shadow</span><span class="o">);</span>
 
 <span class="o">...</span>
 
@@ -693,7 +704,7 @@ If you need help doing this, in Android Studio find the <strong>build.gradle</st
 
 <span class="c1">// 8. Set the ItemDecorators</span>
 <span class="n">listingsView</span><span class="o">.</span><span class="na">addItemDecoration</span><span class="o">(</span><span class="n">shadowItemDecorator</span><span class="o">);</span>
-<span class="n">listingsView</span><span class="o">.</span><span class="na">addItemDecoration</span><span class="o">(</span><span class="n">itemDecorator</span><span class="o">);</span></code></pre></div>
+<span class="n">listingsView</span><span class="o">.</span><span class="na">addItemDecoration</span><span class="o">(</span><span class="n">itemDecorator</span><span class="o">);</span></code></pre></figure>
 
 <p>If we go ahead and compile and run we should see the following:</p>
 
@@ -762,63 +773,63 @@ If you need help doing this, in Android Studio find the <strong>build.gradle</st
     <div class="footer-col-12 column">
       <ul>
 <!--         <a href="mailto:info@traversoft.com">info@traversoft.com</a> -->
-        <div class="col-sm-6 col-xs-12">	
-			<div class="row-fluid"> 
+        <div class="col-sm-6 col-xs-12">
+			<div class="row-fluid">
 				<div class="col-sm-offset-1 col-sm-1 col-xs-offset-2 col-xs-2">
 					<a href="http://www.linkedin.com/in/michaelrtraverso/" target="_blank" class="linkedin">
 					    <h5>
-					        <i class="fa fa-linkedin-square" style="font-size: 45px"></i>
+					        <i class="fa fa-custom fa-linkedin-square" style="font-size: 45px"></i>
 					    </h5>
 					</a>
 				</div>
 				<div class="col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-2">
 					<a href="https://www.facebook.com/traversoft" target="_blank" class="facebook-like">
 		                <h5>
-		                    <i class="fa fa-facebook-square" style="font-size: 45px"></i>
+		                    <i class="fa fa-custom fa-facebook-square" style="font-size: 45px"></i>
 		                </h5>
 		            </a>
 				</div>
 				<div class="col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-2">
 				    <a href="https://twitter.com/traversoft" target="_blank" class="twitter">
 				        <h5>
-				            <i class="fa fa-twitter-square" style="font-size: 45px"></i>
+				            <i class="fa fa-custom fa-twitter-square" style="font-size: 45px"></i>
 				        </h5>
 				    </a>
 				</div>
 				<div class="col-sm-offset-1 col-sm-1 col-xs-offset-2 col-xs-2">
 				    <a id="github-link" href="https://github.com/miketraverso" class="github">
 				        <h5>
-				            <i class="fa fa-github" style="font-size: 45px"></i>
+				            <i class="fa fa-custom fa-github" style="font-size: 45px"></i>
 				        </h5>
 				    </a>
 				</div>
 				<div class="col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-2">
-				    
+
 				    <a href="http://appstore.com/traversoft" target="_blank" class="apple">
 				        <h5>
-				            <i class="fa fa-apple" style="font-size: 45px"></i>
+				            <i class="fa fa-custom fa-apple" style="font-size: 45px"></i>
 				        </h5>
 				    </a>
 				</div>
 				<div class="col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-2">
-				    
+
 				    <a href="#contactus-subsection" class="google">
 				        <h5>
-				            <i class="fa fa-android" style="font-size: 45px"></i>
+				            <i class="fa fa-custom fa-android" style="font-size: 45px"></i>
 				        </h5>
 				    </a>
 				</div>
-			</div>	
+			</div>
 			<div class="row-fluid">
 				<div class="col-sm-12 col-xs-12">
 					<div class="panel-body center lead">Follow <b>Traversoft</b> on social media, check out our apps or <a href="mailto:info@traversoft.com">e-mail</a> us today to discuss your next mobile project</div>
 				</div>
-			</div>    
+			</div>
 		</div>
-		
-        <div class="col-sm-6 col-xs-12">	
-			<div class="row-fluid"> 
-				<p class="legalese text-left">Copyright &copy;  Software 2016</p>
+
+        <div class="col-sm-6 col-xs-12">
+			<div class="row-fluid">
+				<p class="legalese text-left">Copyright &copy;  Software 2017</p>
 				<p class="legalese text-left">Font Awesome by Dave Gandy - http://fontawesome.io</p>
 				<p class="legalese text-left">All brand icons are trademarks of their respective owners.</p>
 				<p class="legalese text-left">The use of trademarked images does not indicate endorsement of trademark owner by Traversoft.</p>

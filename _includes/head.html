@@ -13,10 +13,17 @@
     <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" rel="stylesheet">
-    <link href='//fonts.googleapis.com/css?family=Droid+Serif:400,700' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Droid+Serif' rel='stylesheet' type='text/css'>
+    <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Fira+Mono:400,700|Roboto+Slab:300,400" rel="stylesheet">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ "/css/main.css" | prepend: site.baseurl }}">
     <link rel="stylesheet" href="{{ "/css/blog-styles.css" | prepend: site.baseurl }}">
     <link href="{{ "/css/rrssb.css" | prepend: site.baseurl }}" rel="stylesheet" />
 
+    <!-- <link rel="stylesheet" href="/scripts/highlight/styles/darkula.css"> -->
+    <link rel="stylesheet" title="Atom One Dark" href={{ "/scripts/highlight/styles/atom-one-dark.css" | prepend: site.baseurl }}>
+    <script src='{{ "/scripts/highlight/highlight.pack.js" | prepend: site.baseurl }}'></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 </head>

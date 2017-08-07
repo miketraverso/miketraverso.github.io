@@ -2,10 +2,10 @@
 title: traversoft
 email: info@traversoft.com
 description: "We handle iOS and Android development projects of all sorts. We can also help you implement an HTML5/CSS webapp with either a C# or Java backend. Whatever your mobile app needs are we've got the skills to make it happen."
-baseurl: ""
-url: "//traversoft.com/blog"
+baseurl: "/blog"
+url: "//traversoft.com"
 highlighter: pygments
- 
+
 sitemap:
     file: "/sitemap.xml"
     exclude:
@@ -16,10 +16,11 @@ sitemap:
         - "/index.html"
     change_frequency_name: "change_frequency"
     priority_name: "priority"
-    
+
 # Build settings
 markdown: kramdown
 permalink: pretty
 paginate: 10
 paginate_path: "/page:num/"
-
+future: true
+gems: [jekyll-paginate]

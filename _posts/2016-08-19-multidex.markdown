@@ -9,7 +9,7 @@ thumbnail: /blog/images/posts/thumbnails/multidex.png
 
 ## Have you seen this before?
 
-![DexIndexOverflowException]({{ site.baseurl }}/blog/images/posts/multidex/error.png){: .img-responsive .center-block }
+![DexIndexOverflowException]({{ site.baseurl }}/images/posts/multidex/error.png){: .img-responsive .center-block }
 
 Seeing the following error after including a big new library via a gradle can make you very very nervous. You see this error only when you try running your code, because hey, gradle says you didn't have any errors so what gives?
 

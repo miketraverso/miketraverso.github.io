@@ -1,20 +1,20 @@
 ---
 layout: post
-title:  "How to customize Android UI" 
+title:  "How to customize Android UI"
 date:   2015-09-01 12:36:01
-description: How to customize the Android UI. Customize the font of EditText. Customize the font of TextView. Customize 
+description: How to customize the Android UI. Customize the font of EditText. Customize the font of TextView. Customize
 #categories: android programming development UI UX
 tags: android programming development UI UX
-thumbnail: /images/custom-text-button-actionbar-components-thumb.png
+thumbnail: /blog/images/custom-text-button-actionbar-components-thumb.png
 ---
 
 In this post I will walk you through how to achieve customization of various Android UI elements. For those not interested in reading through this, all the code can be found on **[GitHub](https://github.com/miketraverso/CustomUIComponentsDemo)**. For everyone else let's get started applying our own theme to our app!
 
-So let's go ahead and open up Android studio and create a new Android project. 
-Let's go ahead and select a **Blank Activity** and we can keep the default name of MainActivity for this activity. 
+So let's go ahead and open up Android studio and create a new Android project.
+Let's go ahead and select a **Blank Activity** and we can keep the default name of MainActivity for this activity.
 Now we're ready to start getting our app customized!
 
-Android has come a long way in terms of its look and feel. Unfortunately, though it's not as easy to completely get your app's UI components to match the theme of your app. With iOS you could simply chose the font you wanted for a label from a dropdown. Android doesn't make this as simple. For example, if you want to use a custom font for your TextView you would have to create the `TextView` in the layout file, get a reference to that component by its ID then load your font into a `TypeFace` and apply the `Typeface` to your `TextView` reference. Let's walk through how we would do that with a specific example. 
+Android has come a long way in terms of its look and feel. Unfortunately, though it's not as easy to completely get your app's UI components to match the theme of your app. With iOS you could simply chose the font you wanted for a label from a dropdown. Android doesn't make this as simple. For example, if you want to use a custom font for your TextView you would have to create the `TextView` in the layout file, get a reference to that component by its ID then load your font into a `TypeFace` and apply the `Typeface` to your `TextView` reference. Let's walk through how we would do that with a specific example.
 
 Here's our layout for our MainActivity and below the layout XML we have a screenshot of what the app looks like. Go ahead and copy and paste this into your activity_mail.xml. We are setting up a `RelativeLayout` with three components. A `TextView`, an `EditText` component and a `Button`. Pretty simple interface.
 
@@ -52,7 +52,7 @@ Here's our layout for our MainActivity and below the layout XML we have a screen
 
 ![App without customization]({{ site.baseurl }}/images/default-app-components.png){: .img-responsive .center-block }
 
-Now we can update our MainActivity.java but adding to our **onCreate** method the following code. With the following code we are going to create a `Typeface` with our font. Then we are going to apply that `Typeface` to our `TextView`. This will allow the `TextView` to appear with the Gotham-Bold font. 
+Now we can update our MainActivity.java but adding to our **onCreate** method the following code. With the following code we are going to create a `Typeface` with our font. Then we are going to apply that `Typeface` to our `TextView`. This will allow the `TextView` to appear with the Gotham-Bold font.
 
 {% highlight java %}
 
@@ -62,22 +62,22 @@ protected void onCreate(Bundle savedInstanceState) {
 	setContentView(R.layout.activity_layout);
 
 	Typeface customTypeface = Typeface.createFromAsset(getAssets(), "fonts/Gotham-Bold.otf");
-	
+
 	TextView mTextView;
 	mTextView = (TextView) findViewById(R.id.myTextView);
-	mTextView.setTypeface(customTypeface); 
+	mTextView.setTypeface(customTypeface);
 ...
 }
-	
+
 {% endhighlight %}
 
-In this example, you can see that in the activity's `onCreate(Bundle savedInstanceState)` method we set the content view and from the loaded view layout we get a reference to the `TextView` with identifier *myTextView*. 
+In this example, you can see that in the activity's `onCreate(Bundle savedInstanceState)` method we set the content view and from the loaded view layout we get a reference to the `TextView` with identifier *myTextView*.
 
 The next step is to create a `Typeface` object with the font you want to use. I'm using the Gotham-Bold.otf font file, but you would replace with your own font file along with the correct path to said font file if you wanted to create a different directory to keep your font assets in. In my case, under all my font's can be found in the newly created **assets** directory where I have a sub-folder named **fonts**
 
 ![Android Studio Project explorer showings assets/fonts/ directory]({{ site.baseurl }}/images/custom-android-ui-font.png){: .img-responsive .center-block }
 
-   
+
 In the final step we call setTypeface on the desired `TextView` object and we now have a label with our custom font. Check out the screenshot below to see what this code will generate in the app. Pretty cool huh? We can do the same with an `EditText`:
 
 {% highlight java %}
@@ -86,20 +86,20 @@ protected void onCreate(Bundle savedInstanceState) {
 
 	super.onCreate(savedInstanceState);
 	setContentView(R.layout.activity_layout);
-	
+
 	Typeface customTypeface = Typeface.createFromAsset(getAssets(), "fonts/Gotham-Bold.otf");
 
 	TextView mTextView;
 	mTextView = (TextView) findViewById(R.id.myTextView);
 	mTextView.setTypeface(customTypeface);
-	
+
 	EditText mEditTextView;
 	mEditTextView = (EditText) findViewById(R.id.myEditTextView);
-	mEditTextView.setTypeface(customTypeface); 
+	mEditTextView.setTypeface(customTypeface);
 
 ...
 }
-	
+
 {% endhighlight %}
 
 ![App with custom TextView and EditText font]({{ site.baseurl }}/images/custom-text-components.png){: .img-responsive .center-block }
